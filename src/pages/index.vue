@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import type { Entry, Profile } from '@/shared/db';
 import type { DateKey } from '@/shared/lib';
-import { Button, cn, toast, useConfirm } from 'shonk-ui';
-import { computed, ref, useTemplateRef } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { toast, useConfirm } from 'shonk-ui';
+import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
-  countMeasured,
+  entriesFrom,
   entriesOfDay,
   EntryRow,
   removeEntry,
   restoreEntry,
   totalKcal,
-  totalNutrients,
+  totalsByDate,
 } from '@/entities/entry';
 import { photosById, useCustomFoods } from '@/entities/food';
 import { loadProfile } from '@/entities/profile';
-import { isToday, requestedDateKey, useLiveQuery } from '@/shared/lib';
+import { fromDateKey, requestedDateKey, shiftDateKey, toDateKey, useLiveQuery } from '@/shared/lib';
 import { DayProgress } from '@/widgets/day-progress';
-import { DayQuality } from '@/widgets/day-quality';
 import { WeekStrip } from '@/widgets/week-strip';
-import { nextCompact } from './compact';
 
 const route = useRoute();
 const router = useRouter();
@@ -33,6 +31,7 @@ const dateKey = computed({
 });
 
 const entries = useLiveQuery<Entry[]>(() => entriesOfDay(dateKey.value), [], [dateKey]);
+const historyEntries = useLiveQuery<Entry[]>(() => entriesFrom(shiftDateKey(toDateKey(), -185)), []);
 const profile = useLiveQuery<Profile | undefined>(() => loadProfile(), undefined);
 const customFoods = useCustomFoods();
 
@@ -40,31 +39,19 @@ const customPhotos = computed(() => photosById(customFoods.value));
 
 const eaten = computed(() => totalKcal(entries.value));
 const target = computed(() => profile.value?.targetKcal ?? 0);
-const weight = computed(() => profile.value?.weightKg ?? 0);
-const nutrients = computed(() => totalNutrients(entries.value));
-const measured = computed(() => countMeasured(entries.value));
-const showsToday = computed(() => isToday(dateKey.value));
-const addLink = computed(() => (showsToday.value ? '/add' : `/add?date=${dateKey.value}`));
+const dailyTotals = computed(() => totalsByDate(historyEntries.value));
+const monthLabel = computed(() => {
+  const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(fromDateKey(dateKey.value));
 
-const summary = useTemplateRef<HTMLElement>('summary');
-const compact = ref(false);
-
-function trackScroll(event: Event) {
-  const list = event.target as HTMLElement;
-
-  compact.value = nextCompact(compact.value, {
-    scrollTop: list.scrollTop,
-    scrollable: list.scrollHeight - list.clientHeight,
-    headerHeight: summary.value?.offsetHeight ?? 0,
-  });
-}
+  return month.charAt(0).toUpperCase() + month.slice(1);
+});
 
 async function remove(entry: Entry) {
   await removeEntry(entry.id);
 
-  toast('Запись удалена', {
+  toast('Entry deleted', {
     action: {
-      label: 'Вернуть',
+      label: 'Undo',
       onClick: () => {
         void restoreEntry(entry);
       },
@@ -74,8 +61,8 @@ async function remove(entry: Entry) {
 
 function askToRemove(entry: Entry) {
   confirmation.require({
-    message: `«${entry.name}» пропадёт из дневника за этот день.`,
-    acceptButtonText: 'Удалить',
+    message: `“${entry.name}” will be removed from this day.`,
+    acceptButtonText: 'Delete',
     accept: () => {
       void remove(entry);
     },
@@ -88,28 +75,19 @@ function editEntry(entry: Entry) {
 </script>
 
 <template>
-  <main class="flex min-h-0 flex-1 flex-col">
-    <WeekStrip v-model="dateKey" :gesture-area="summary" class="shrink-0 pt-6 pb-2" />
+  <main class="flex min-h-0 flex-1 flex-col bg-[#0c0e11] text-[#f7f8fa]">
+    <header class="flex shrink-0 items-center px-4 pt-7 pb-3">
+      <h1 class="text-[29px] leading-none font-bold tracking-[-0.04em]">
+        {{ monthLabel }}
+      </h1>
+    </header>
 
-    <div
-      ref="summary"
-      :class="cn('shrink-0 border-b border-border px-4 transition-all duration-300', compact ? 'py-3' : 'py-6')"
-    >
-      <DayProgress :eaten="eaten" :target="target" :compact="compact" />
+    <WeekStrip v-model="dateKey" :totals="dailyTotals" :target="target" class="shrink-0 pb-[17px]" />
 
-      <DayQuality
-        v-if="!compact && entries.length"
-        :nutrients="nutrients"
-        :measured="measured"
-        :entries="entries.length"
-        :weight-kg="weight"
-        :target-kcal="target"
-        class="mt-5"
-      />
-    </div>
+    <div class="scrollbar-none min-h-0 flex-1 overflow-y-auto px-4 pb-28">
+      <DayProgress :eaten="eaten" :target="target" />
 
-    <div class="min-h-0 flex-1 overflow-y-auto pb-6" @scroll="trackScroll">
-      <ul v-if="entries.length">
+      <ul v-if="entries.length" class="mt-3.5 space-y-2.5">
         <EntryRow
           v-for="entry in entries"
           :key="entry.id"
@@ -120,15 +98,22 @@ function editEntry(entry: Entry) {
         />
       </ul>
 
-      <p v-else class="px-4 py-8 text-center text-sm text-muted-foreground">
-        {{ showsToday ? 'Сегодня пока пусто' : 'В этот день записей нет' }}
-      </p>
-
-      <div v-if="!showsToday || !entries.length" class="px-4 pt-4">
-        <Button :as="RouterLink" :to="addLink" class="w-full">
-          Добавить
-        </Button>
-      </div>
+      <section
+        v-else
+        class="mt-3.5 flex min-h-60 flex-col items-center justify-center rounded-3xl border border-white/[0.08] bg-[#171a1f] px-6 py-7 text-center"
+      >
+        <img
+          src="/empty-meals.png"
+          alt="Empty plate"
+          class="size-36 object-contain"
+        >
+        <h2 class="mt-2 text-[17px] leading-tight font-semibold tracking-[-0.01em] text-[#f7f8fa]">
+          You haven’t added anything yet
+        </h2>
+        <p class="mt-1.5 max-w-64 text-sm leading-5 text-[#8f949d]">
+          Tap the plus button to add your first meal
+        </p>
+      </section>
     </div>
   </main>
 </template>

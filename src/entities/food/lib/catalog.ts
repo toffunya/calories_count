@@ -1,8 +1,8 @@
 import type { Food } from './types';
 
 export const foods: Food[] = [
-  { id: 'sugar-spoon', name: 'Сахар, ложка', kcal: 20, photo: 'sugar-spoon.webp', category: 'drinks', tags: ['кофе', 'чай'] },
-  { id: 'angus-kebab', name: 'Ангус-кебаб', kcal: 850, photo: 'angus-kebab.webp', category: 'outside', tags: ['мясо', 'лаваш'] },
+  { id: 'sugar-spoon', name: 'Spoon of sugar', kcal: 20, photo: 'sugar-spoon.webp', category: 'drinks', tags: ['coffee', 'tea'] },
+  { id: 'angus-kebab', name: 'Angus kebab', kcal: 850, photo: 'angus-kebab.webp', category: 'outside', tags: ['meat', 'flatbread'] },
 ];
 
 const byId = new Map(foods.map(food => [food.id, food]));

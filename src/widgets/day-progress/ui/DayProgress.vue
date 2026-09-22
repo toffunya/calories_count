@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cn } from 'shonk-ui';
+import { CheckIcon } from '@lucide/vue';
 import { computed } from 'vue';
 import { formatNumber } from '@/shared/lib';
 
@@ -9,76 +9,91 @@ const props = defineProps<{
   compact?: boolean;
 }>();
 
-const RADIUS = 52;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
 const ratio = computed(() => (props.target > 0 ? props.eaten / props.target : 0));
-const filled = computed(() => Math.min(ratio.value, 1));
-const overflow = computed(() => Math.min(Math.max(ratio.value - 1, 0), 1));
+const progress = computed(() => Math.min(Math.round(ratio.value * 100), 100));
 const remaining = computed(() => props.target - props.eaten);
 const isOver = computed(() => remaining.value < 0);
-
-const stats = computed(() => [
-  { label: 'Съедено', value: props.eaten, over: false },
-  { label: isOver.value ? 'Перебор' : 'Осталось', value: Math.abs(remaining.value), over: isOver.value },
-  { label: 'Цель', value: props.target, over: false },
-]);
+const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories');
 </script>
 
 <template>
-  <section :class="cn('flex transition-all duration-300', props.compact ? 'items-center gap-5' : 'flex-col items-center gap-4')">
-    <div class="relative shrink-0">
-      <svg viewBox="0 0 120 120" :class="cn('-rotate-90 transition-all duration-300', props.compact ? 'size-24' : 'size-44')">
-        <circle
-          cx="60"
-          cy="60"
-          :r="RADIUS"
-          fill="none"
-          stroke-width="10"
-          class="stroke-muted"
-        />
-        <circle
-          cx="60"
-          cy="60"
-          :r="RADIUS"
-          fill="none"
-          stroke-width="10"
-          stroke-linecap="round"
-          :stroke-dasharray="CIRCUMFERENCE"
-          :stroke-dashoffset="CIRCUMFERENCE * (1 - filled)"
-          class="stroke-primary transition-[stroke-dashoffset] duration-300"
-        />
-        <circle
-          v-if="overflow > 0"
-          cx="60"
-          cy="60"
-          :r="RADIUS"
-          fill="none"
-          stroke-width="10"
-          stroke-linecap="round"
-          :stroke-dasharray="CIRCUMFERENCE"
-          :stroke-dashoffset="CIRCUMFERENCE * (1 - overflow)"
-          class="stroke-destructive transition-[stroke-dashoffset] duration-300"
-        />
-      </svg>
-
-      <div class="absolute inset-0 flex flex-col items-center justify-center">
-        <span :class="cn('font-semibold tabular-nums text-foreground transition-all duration-300', props.compact ? 'text-lg' : 'text-3xl')">
-          {{ formatNumber(eaten) }}
-        </span>
-        <span v-if="!props.compact" class="text-xs text-muted-foreground">из {{ formatNumber(target) }} ккал</span>
-      </div>
+  <section class="rounded-3xl border border-white/[0.08] bg-[#171a1f] p-[18px]">
+    <div class="flex items-center justify-between gap-4 text-xs text-[#8f949d]">
+      <span>{{ headline }}</span>
+      <span
+        class="inline-flex items-center gap-1.5 text-[11px] font-bold"
+        :class="isOver ? 'text-[#ff6b6b]' : 'text-[#74df83]'"
+      >
+        <CheckIcon v-if="!isOver" class="size-3.5" stroke-width="2.5" />
+        {{ isOver ? 'Over goal' : 'On track' }}
+      </span>
     </div>
 
-    <dl :class="cn('transition-all duration-300', props.compact ? 'flex min-w-0 flex-1 flex-col gap-1.5' : 'grid w-full grid-cols-3 gap-2 text-center')">
-      <div v-for="stat in stats" :key="stat.label" :class="cn(props.compact && 'flex items-baseline justify-between gap-3')">
-        <dt class="text-xs text-muted-foreground">
-          {{ stat.label }}
-        </dt>
-        <dd :class="cn('text-sm tabular-nums', stat.over ? 'text-destructive' : 'text-foreground')">
-          {{ formatNumber(stat.value) }}
+    <div class="mt-4 flex items-baseline gap-2">
+      <strong
+        class="text-[46px] leading-[0.9] font-extrabold tracking-[-0.06em] tabular-nums"
+        :class="isOver ? 'text-[#ff6b6b]' : 'text-[#f7f8fa]'"
+      >
+        {{ formatNumber(Math.abs(remaining)) }}
+      </strong>
+      <span class="text-base font-semibold text-[#c8cbd0]">kcal {{ isOver ? 'over' : 'left' }}</span>
+    </div>
+
+    <p class="mt-3 mb-4 text-xs leading-5 text-[#8f949d]">
+      {{ isOver ? `You are ${formatNumber(Math.abs(remaining))} kcal over today.` : `You can still eat ${formatNumber(remaining)} kcal today.` }}
+    </p>
+
+    <progress
+      class="calorie-progress block h-[9px] w-full overflow-hidden rounded-full"
+      :class="isOver ? 'is-over' : ''"
+      :value="progress"
+      max="100"
+      :aria-label="`${progress}% of daily target`"
+    />
+
+    <dl class="mt-3.5 grid grid-cols-2">
+      <div class="min-w-0 pr-3">
+        <dt class="text-[10px] text-[#8f949d]">Eaten</dt>
+        <dd class="mt-1 text-[13px] font-semibold tabular-nums text-[#e6e8eb]">
+          {{ formatNumber(eaten) }} kcal
+        </dd>
+      </div>
+
+      <div class="min-w-0 border-l border-white/[0.08] pl-3">
+        <dt class="text-[10px] text-[#8f949d]">Daily goal</dt>
+        <dd class="mt-1 text-[13px] font-semibold tabular-nums text-[#e6e8eb]">
+          {{ formatNumber(target) }} kcal
         </dd>
       </div>
     </dl>
   </section>
 </template>
+
+<style scoped>
+.calorie-progress {
+  appearance: none;
+  border: 0;
+  background: #2b3038;
+}
+
+.calorie-progress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: #2b3038;
+}
+
+.calorie-progress::-webkit-progress-value {
+  border-radius: 999px;
+  background: #2388ff;
+  transition: width 300ms ease;
+}
+
+.calorie-progress::-moz-progress-bar {
+  border-radius: 999px;
+  background: #2388ff;
+}
+
+.calorie-progress.is-over::-webkit-progress-value,
+.calorie-progress.is-over::-moz-progress-bar {
+  background: #ef4444;
+}
+</style>

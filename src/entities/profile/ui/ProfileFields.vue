@@ -47,28 +47,30 @@ const goalHint = computed(() => goalOptions.find(option => option.id === goal.va
       </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <Label>Активность</Label>
-      <NativeSelect v-model="activity">
-        <NativeSelectOption v-for="option in activityOptions" :key="option.id" :value="option.id">
-          {{ option.name }}
-        </NativeSelectOption>
-      </NativeSelect>
-      <p class="text-xs text-muted-foreground">
-        {{ activityHint }}
-      </p>
-    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="flex min-w-0 flex-col gap-2 [&>[data-slot=native-select-wrapper]]:w-full">
+        <Label>Активность</Label>
+        <NativeSelect v-model="activity" class="w-full">
+          <NativeSelectOption v-for="option in activityOptions" :key="option.id" :value="option.id">
+            {{ option.name }}
+          </NativeSelectOption>
+        </NativeSelect>
+        <p class="text-xs text-muted-foreground">
+          {{ activityHint }}
+        </p>
+      </div>
 
-    <div class="flex flex-col gap-2">
-      <Label>Цель</Label>
-      <NativeSelect v-model="goal">
-        <NativeSelectOption v-for="option in goalOptions" :key="option.id" :value="option.id">
-          {{ option.name }}
-        </NativeSelectOption>
-      </NativeSelect>
-      <p class="text-xs text-muted-foreground">
-        {{ goalHint }}
-      </p>
+      <div class="flex min-w-0 flex-col gap-2 [&>[data-slot=native-select-wrapper]]:w-full">
+        <Label>Цель</Label>
+        <NativeSelect v-model="goal" class="w-full">
+          <NativeSelectOption v-for="option in goalOptions" :key="option.id" :value="option.id">
+            {{ option.name }}
+          </NativeSelectOption>
+        </NativeSelect>
+        <p class="text-xs text-muted-foreground">
+          {{ goalHint }}
+        </p>
+      </div>
     </div>
   </div>
 </template>

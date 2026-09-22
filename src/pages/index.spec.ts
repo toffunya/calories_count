@@ -104,12 +104,12 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('экран «Сегодня»', () => {
+describe('экран Home', () => {
   it('показывает пустой день', () => {
     const wrapper = mount(TodayView);
 
-    expect(wrapper.text()).toContain('Сегодня');
-    expect(wrapper.text()).toContain('Сегодня пока пусто');
+    expect(wrapper.text()).toContain('Today');
+    expect(wrapper.text()).toContain('You haven’t added anything yet');
   });
 
   it('складывает калории записей', () => {
@@ -129,7 +129,7 @@ describe('экран «Сегодня»', () => {
     expect(removeEntry).not.toHaveBeenCalled();
 
     const options = requireConfirm.mock.calls[0][0] as { message: string; acceptButtonText: string };
-    expect(options.acceptButtonText).toBe('Удалить');
+    expect(options.acceptButtonText).toBe('Delete');
     expect(options.message).toContain('Кофе чёрный');
   });
 
@@ -142,7 +142,7 @@ describe('экран «Сегодня»', () => {
     await acceptRemoval();
 
     expect(removeEntry).toHaveBeenCalledWith('entry-1');
-    expect(toast).toHaveBeenCalledWith('Запись удалена', expect.anything());
+    expect(toast).toHaveBeenCalledWith('Entry deleted', expect.anything());
   });
 
   it('нажатие «Вернуть» восстанавливает запись целиком', async () => {
@@ -181,12 +181,12 @@ describe('экран «Сегодня»', () => {
   it('открывает день, выбранный в ленте, и возвращается к сегодня', async () => {
     const wrapper = mount(TodayView);
 
-    await currentWeekButtons(wrapper)[1].trigger('click');
-    expect(wrapper.text()).toContain('В этот день записей нет');
-    expect(wrapper.find('[aria-current="date"]').attributes('aria-label')).toContain('18 август');
-
     await currentWeekButtons(wrapper)[2].trigger('click');
-    expect(wrapper.text()).toContain('Сегодня пока пусто');
+    expect(wrapper.text()).toContain('You haven’t added anything yet');
+    expect(wrapper.find('[aria-current="date"]').attributes('aria-label')).toContain('August 18');
+
+    await currentWeekButtons(wrapper)[3].trigger('click');
+    expect(wrapper.text()).toContain('You haven’t added anything yet');
   });
 
   it('открывает день, указанный в адресе', () => {
@@ -194,12 +194,12 @@ describe('экран «Сегодня»', () => {
 
     const wrapper = mount(TodayView);
 
-    expect(wrapper.find('[aria-current="date"]').attributes('aria-label')).toContain('17 август');
+    expect(wrapper.find('[aria-current="date"]').attributes('aria-label')).toContain('August 17');
   });
 
   it('не пускает в будущее', () => {
     const wrapper = mount(TodayView);
 
-    expect(currentWeekButtons(wrapper)[3].attributes('disabled')).toBeDefined();
+    expect(currentWeekButtons(wrapper)[4].attributes('disabled')).toBeDefined();
   });
 });

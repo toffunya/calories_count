@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FlameIcon } from '@lucide/vue';
 import { Button } from 'shonk-ui';
 import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -46,14 +47,22 @@ async function submit() {
 
       <div class="rounded-lg border border-border bg-secondary p-4">
         <template v-if="breakdown">
-          <p class="text-3xl font-semibold tabular-nums text-foreground">
-            {{ formatNumber(breakdown.target) }}
-            <span class="text-base font-normal text-muted-foreground">ккал в день</span>
-          </p>
-          <p class="mt-2 text-xs text-muted-foreground">
-            Базовый обмен {{ formatNumber(Math.round(breakdown.bmr)) }},
-            полный расход {{ formatNumber(Math.round(breakdown.tdee)) }} ккал
-          </p>
+          <div class="flex items-center gap-3">
+            <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <FlameIcon class="size-6" aria-hidden="true" />
+            </div>
+
+            <div class="min-w-0">
+              <p class="text-3xl font-semibold tabular-nums text-foreground">
+                {{ formatNumber(breakdown.target) }}
+                <span class="text-base font-normal text-muted-foreground">ккал в день</span>
+              </p>
+              <p class="mt-2 text-xs text-muted-foreground">
+                Базовый обмен {{ formatNumber(Math.round(breakdown.bmr)) }},
+                полный расход {{ formatNumber(Math.round(breakdown.tdee)) }} ккал
+              </p>
+            </div>
+          </div>
           <p v-if="breakdown.clampedToMinimum" class="mt-2 text-xs text-warning">
             Расчёт дал меньше безопасного минимума, норма поднята до {{ formatNumber(breakdown.target) }} ккал.
           </p>

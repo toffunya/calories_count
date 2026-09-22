@@ -3,7 +3,7 @@ import type { Entry } from '@/shared/db';
 import { Trash2Icon } from '@lucide/vue';
 import { SwipeAction } from 'shonk-ui';
 import { computed } from 'vue';
-import { FoodThumb, formatAmount } from '@/entities/food';
+import { foodById, FoodThumb, formatAmount } from '@/entities/food';
 import { formatNumber, formatTime } from '@/shared/lib';
 import { entryAmount, entryKcal } from '../lib/entry';
 
@@ -16,42 +16,43 @@ const emit = defineEmits<{
 
 const kcal = computed(() => entryKcal(props.entry));
 const amount = computed(() => entryAmount(props.entry));
+const displayName = computed(() => foodById(props.entry.foodId ?? '')?.name ?? props.entry.name);
 </script>
 
 <template>
   <SwipeAction
     as="li"
     :trigger-threshold="0.3"
-    right-action-aria-label="Удалить"
-    class="border-b border-border last:border-b-0"
+    right-action-aria-label="Delete"
+    class="overflow-hidden rounded-[18px] border border-white/[0.08] bg-[#171a1f] [&>[data-slot=swipe-action-content]]:bg-[#171a1f]"
     @trigger="emit('remove', props.entry)"
   >
     <template #right-action>
       <Trash2Icon />
     </template>
 
-    <div class="flex items-center gap-3 px-4 py-3" @click="emit('edit', props.entry)">
-      <FoodThumb :food-id="entry.foodId" :photo="entry.photo ?? props.photo" :name="entry.name" zoomable class="size-11" />
+    <div class="flex min-h-[88px] items-center gap-3 p-2" @click="emit('edit', props.entry)">
+      <FoodThumb :food-id="entry.foodId" :photo="entry.photo ?? props.photo" :name="displayName" zoomable class="size-[72px] rounded-[13px]" />
 
-      <div class="min-w-0 flex-1">
-        <p class="truncate text-sm text-foreground">
-          {{ entry.name }}
-        </p>
-        <p class="text-xs text-muted-foreground">
-          {{ formatTime(entry.createdAt) }}
-        </p>
-      </div>
+      <div class="flex min-w-0 flex-1 self-stretch flex-col justify-between py-1">
+        <div class="flex items-start justify-between gap-2">
+          <p class="truncate pr-1 text-base font-semibold text-[#f7f8fa]">
+            {{ displayName }}
+          </p>
+          <span class="shrink-0 rounded-lg bg-[#252930] px-2 py-1 text-[10px] tabular-nums text-[#9297a0]">
+            {{ formatTime(entry.createdAt) }}
+          </span>
+        </div>
 
-      <div class="flex items-center gap-2">
-        <span v-if="entry.qty !== 1" class="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-          ×{{ entry.qty }}
-        </span>
-        <span v-if="amount !== undefined" class="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-          {{ formatAmount(amount, entry.unit) }}
-        </span>
-        <span class="text-sm tabular-nums text-foreground">
-          {{ formatNumber(kcal) }}<span class="ml-1 text-xs text-muted-foreground">ккал</span>
-        </span>
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#8f949d]">
+          <span><strong class="font-bold text-[#ff974d]">{{ formatNumber(kcal) }} kcal</strong></span>
+          <span v-if="amount !== undefined" class="flex items-center gap-1.5 before:size-1 before:rounded-full before:bg-[#74df83]">
+            {{ formatAmount(amount, entry.unit) }}
+          </span>
+          <span v-if="entry.qty !== 1" class="flex items-center gap-1.5 before:size-1 before:rounded-full before:bg-[#74df83]">
+            ×{{ entry.qty }}
+          </span>
+        </div>
       </div>
     </div>
   </SwipeAction>
