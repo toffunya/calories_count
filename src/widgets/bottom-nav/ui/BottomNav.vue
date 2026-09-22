@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
-import { ActivityIcon, ChartColumnIcon, HouseIcon, UserRoundIcon, UtensilsIcon } from '@lucide/vue';
+import { ActivityIcon, HouseIcon, UserRoundIcon, UtensilsIcon } from '@lucide/vue';
 import { cn } from 'shonk-ui';
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useLocale } from '@/shared/lib';
 
 interface NavItem {
   to: string;
@@ -11,11 +12,8 @@ interface NavItem {
   icon: Component;
 }
 
-const props = withDefaults(defineProps<{ home?: boolean }>(), {
-  home: false,
-});
-
-const items = computed<NavItem[]>(() => props.home
+const { isEnglish } = useLocale();
+const items = computed<NavItem[]>(() => isEnglish.value
   ? [
       { to: '/', label: 'Today', icon: HouseIcon },
       { to: '/add', label: 'Recipes', icon: UtensilsIcon },
@@ -23,51 +21,42 @@ const items = computed<NavItem[]>(() => props.home
       { to: '/settings', label: 'Profile', icon: UserRoundIcon },
     ]
   : [
-      { to: '/', label: 'Home', icon: HouseIcon },
-      { to: '/add', label: 'Recipes', icon: UtensilsIcon },
-      { to: '/stats', label: 'Stats', icon: ChartColumnIcon },
-      { to: '/settings', label: 'Profile', icon: UserRoundIcon },
+      { to: '/', label: 'Сегодня', icon: HouseIcon },
+      { to: '/add', label: 'Рецепты', icon: UtensilsIcon },
+      { to: '/stats', label: 'Прогресс', icon: ActivityIcon },
+      { to: '/settings', label: 'Профиль', icon: UserRoundIcon },
     ]);
 </script>
 
 <template>
   <nav
-    :class="cn(
-      'relative z-10 rounded-[22px] p-2',
-      home
-        ? 'mr-[80px] ml-2 h-[66px] border border-white/[0.08] bg-[rgba(23,26,31,0.97)] shadow-[0_12px_30px_rgba(0,0,0,0.38)]'
-        : 'mx-auto mb-2 h-20 w-[min(calc(100%_-_2rem),332px)] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.14)]',
-    )"
+    class="relative z-10 mx-2 h-[66px] rounded-[22px] border border-white/[0.08] bg-[rgba(23,26,31,0.97)] p-2 shadow-[0_12px_30px_rgba(0,0,0,0.38)]"
   >
-    <ul class="grid h-full grid-cols-4">
-      <li v-for="item in items" :key="item.to">
-        <RouterLink #default="{ href, navigate, isExactActive }" :to="item.to" custom>
-          <a
-            :href="href"
-            :aria-label="item.label"
-            :class="cn(
-              'flex w-full items-center justify-center transition-all active:scale-95',
-              home ? 'h-12 text-[9px]' : 'h-16 text-[12px]',
-              isExactActive ? (home ? 'font-bold text-[#63aaff]' : 'text-[#1683f8]') : (home ? 'text-[#747a84]' : 'text-[#77777d]'),
-            )"
-            @click="navigate"
-          >
-            <span
+    <ul class="grid h-full grid-cols-[1fr_1fr_64px_1fr_1fr]">
+      <template v-for="(item, index) in items" :key="item.to">
+        <li v-if="index === 2" aria-hidden="true" />
+        <li>
+          <RouterLink #default="{ href, navigate, isActive }" :to="item.to" custom>
+            <a
+              :href="href"
+              :aria-label="item.label"
               :class="cn(
-                'flex flex-col items-center justify-center gap-1 rounded-xl',
-                home ? 'h-12 w-12' : 'h-16 w-16',
-                isExactActive && !home && 'bg-[#dcecff]',
+                'flex h-12 w-full items-center justify-center text-[9px] transition-all active:scale-95',
+                isActive ? 'font-bold text-[#63aaff]' : 'text-[#747a84]',
               )"
+              @click="navigate"
             >
-              <component
-                :is="item.icon"
-                :class="home ? 'size-[19px]' : 'size-7'"
-              />
-              <span v-if="home || isExactActive">{{ item.label }}</span>
-            </span>
-          </a>
-        </RouterLink>
-      </li>
+              <span class="flex h-12 w-12 flex-col items-center justify-center gap-1 rounded-xl">
+                <component
+                  :is="item.icon"
+                  class="size-[19px]"
+                />
+                <span>{{ item.label }}</span>
+              </span>
+            </a>
+          </RouterLink>
+        </li>
+      </template>
     </ul>
   </nav>
 </template>

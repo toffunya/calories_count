@@ -29,6 +29,7 @@ const dateKey = computed(() => requestedDateKey(route.query.date));
 const showsToday = computed(() => isToday(dateKey.value));
 const dayQuery = computed(() => (showsToday.value ? {} : { date: dateKey.value }));
 const input = computed(() => draftToCustomFood(draft.value));
+const capturesFood = computed(() => route.query.capture === 'food');
 
 function missReason(state: 'missing' | 'offline'): string {
   if (state === 'missing') {
@@ -132,7 +133,7 @@ async function submit() {
       </RouterLink>
 
       <h1 class="text-xl font-semibold text-foreground">
-        Своё блюдо
+        {{ capturesFood ? 'Скан еды' : 'Своё блюдо' }}
       </h1>
     </header>
 
@@ -144,7 +145,11 @@ async function submit() {
     </div>
 
     <form class="mt-6 flex flex-col gap-5" @submit.prevent="submit">
-      <CustomFoodFields v-model="draft" :busy="looking" />
+      <p v-if="capturesFood" class="-mb-1 text-sm text-muted-foreground">
+        Сними блюдо, затем добавь название и калорийность.
+      </p>
+
+      <CustomFoodFields v-model="draft" :busy="looking" :camera-preferred="capturesFood" />
 
       <div class="flex items-center gap-3 rounded-lg border border-border p-3">
         <button type="button" class="min-w-0 flex-1 text-left text-sm text-foreground" @click="saves = !saves">

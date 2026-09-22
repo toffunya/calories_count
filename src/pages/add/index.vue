@@ -1,132 +1,80 @@
 <script setup lang="ts">
-import type { ViewMode } from './lib/view-mode';
 import type { CartItem } from '@/entities/entry';
-import type { CategoryId, Portion } from '@/entities/food';
-import { Grid2x2Icon, LayoutGridIcon, ListIcon, ScanBarcodeIcon } from '@lucide/vue';
-import {
-  Badge,
-  Button,
-  cn,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-  Input,
-  toast,
-} from 'shonk-ui';
+import type { Food, Portion } from '@/entities/food';
+import { SearchIcon } from '@lucide/vue';
+import { Button, cn, Input, toast } from 'shonk-ui';
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { addEntries, frequentFoodIds } from '@/entities/entry';
-import {
-  categories,
-  foodById,
-  matchesQuery,
-  photosById,
-  searchFoods,
-  useCustomFoods,
-} from '@/entities/food';
-import { formatDayLabel, isToday, requestedDateKey, useLiveQuery } from '@/shared/lib';
+import { addEntries } from '@/entities/entry';
+import { activeFoods, matchesQuery, photosById, useCustomFoods } from '@/entities/food';
+import { formatDayLabel, isToday, requestedDateKey } from '@/shared/lib';
 import { BarcodeScanner } from '@/widgets/barcode-scanner';
 import { cartSummary, withCartItem } from './lib/cart';
-import { useViewMode, viewModeName, viewModes } from './lib/view-mode';
 import CartPanel from './ui/CartPanel.vue';
 import FoodSection from './ui/FoodSection.vue';
+import RecipeCard from './ui/RecipeCard.vue';
+
+type FilterId = 'all' | 'high-protein' | 'under-400' | 'quick' | 'balanced' | 'mine';
+
+const filters: { id: FilterId; name: string }[] = [
+  { id: 'all', name: 'Все' },
+  { id: 'high-protein', name: 'Белковые' },
+  { id: 'under-400', name: 'До 400 ккал' },
+  { id: 'quick', name: 'До 20 минут' },
+  { id: 'balanced', name: 'Сбалансированные' },
+  { id: 'mine', name: 'Мои блюда' },
+];
 
 const route = useRoute();
 const router = useRouter();
-
-type ChipId = CategoryId | 'all' | 'custom';
-
-const chips: { id: ChipId; name: string }[] = [
-  { id: 'all', name: 'Все' },
-  { id: 'custom', name: 'Своё' },
-  ...categories,
-];
-
-const viewIcons = { grid: LayoutGridIcon, large: Grid2x2Icon, list: ListIcon };
-
 const query = ref('');
-const category = ref<ChipId>('all');
+const filter = ref<FilterId>('all');
 const items = ref<CartItem[]>([]);
 const saving = ref(false);
-
-const view = useViewMode();
-
-const viewIcon = computed(() => viewIcons[view.value] ?? LayoutGridIcon);
-
-function chooseView(mode: unknown) {
-  view.value = mode as ViewMode;
-}
-
+const scanning = ref(route.query.scan === 'barcode');
 const dateKey = computed(() => requestedDateKey(route.query.date));
-
 const showsToday = computed(() => isToday(dateKey.value));
-
 const dayQuery = computed(() => (showsToday.value ? {} : { date: dateKey.value }));
+const customFoods = useCustomFoods();
+const customPhotos = computed(() => photosById(customFoods.value));
+
+const recipes = computed(() => activeFoods.filter((food): food is Food => {
+  if (!food.recipe || filter.value === 'mine' || !matchesQuery(food, query.value))
+    return false;
+  return filter.value === 'all' || food.recipe.collections.includes(filter.value);
+}));
+
+const custom = computed(() => filter.value === 'mine'
+  ? customFoods.value.filter(food => matchesQuery(food, query.value))
+  : []);
 
 function openCustom() {
   void router.push({ path: '/add/custom', query: dayQuery.value });
 }
 
-const scanning = ref(false);
+function closeScanner() {
+  scanning.value = false;
+  if (route.query.scan === 'barcode')
+    void router.replace({ path: '/add', query: dayQuery.value });
+}
 
 function openScanned(code: string) {
   scanning.value = false;
   void router.push({ path: '/add/custom', query: { ...dayQuery.value, barcode: code } });
 }
 
-const customFoods = useCustomFoods();
-
-const customPhotos = computed(() => photosById(customFoods.value));
-
-const showsCustom = computed(() => category.value === 'all' || category.value === 'custom');
-
-const custom = computed(() => (
-  showsCustom.value ? customFoods.value.filter(food => matchesQuery(food, query.value)) : []
-));
-
-const catalog = computed(() => (
-  category.value === 'custom'
-    ? []
-    : searchFoods(query.value, category.value === 'all' ? undefined : category.value)
-));
-
-const frequentIds = useLiveQuery<string[]>(() => frequentFoodIds(), []);
-
-function portionById(id: string): Portion | undefined {
-  const fromCatalog = foodById(id);
-
-  if (fromCatalog) {
-    return fromCatalog.archived ? undefined : fromCatalog;
-  }
-
-  return customFoods.value.find(food => food.id === id);
+function openRecipe(food: Food) {
+  void router.push({ path: `/add/recipe/${food.id}`, query: dayQuery.value });
 }
-
-const frequent = computed(() => frequentIds.value
-  .map(portionById)
-  .filter((food): food is Portion => food !== undefined));
-
-const showsFrequent = computed(() => (
-  !query.value.trim() && category.value === 'all' && frequent.value.length > 0
-));
-
-const emptyText = computed(() => (
-  category.value === 'custom' && !query.value.trim() ? 'Своих блюд пока нет' : 'Ничего не нашлось'
-));
 
 function changeQty(item: CartItem) {
   items.value = withCartItem(items.value, item);
 }
 
 async function confirm() {
-  if (saving.value) {
+  if (saving.value)
     return;
-  }
-
   saving.value = true;
-
   try {
     await addEntries(dateKey.value, items.value);
   }
@@ -134,146 +82,82 @@ async function confirm() {
     console.error('[confirm]', error);
     saving.value = false;
     toast('Не удалось сохранить, попробуй ещё раз');
-
     return;
   }
-
   toast(`Добавлено: ${cartSummary(items.value)}`);
   await router.push({ path: '/', query: dayQuery.value });
 }
 </script>
 
 <template>
-  <BarcodeScanner v-if="scanning" @found="openScanned" @close="scanning = false" />
+  <BarcodeScanner v-if="scanning" @found="openScanned" @close="closeScanner" />
 
-  <main class="flex min-h-0 flex-1 flex-col">
-    <header class="shrink-0 px-4 pt-6 pb-3">
-      <div v-if="!showsToday" class="mb-3 flex items-center gap-2">
-        <Badge variant="secondary">
-          {{ formatDayLabel(dateKey) }}
-        </Badge>
-        <span class="text-xs text-muted-foreground">запись задним числом</span>
-      </div>
+  <main class="flex min-h-0 flex-1 flex-col bg-[#0c0e11] text-white">
+    <header class="shrink-0 px-4 pt-5 pb-3">
+      <div v-if="!showsToday" class="mb-3 flex items-center gap-2 text-xs text-zinc-400">Рецепты на {{ formatDayLabel(dateKey) }}</div>
 
-      <div class="flex items-center gap-2">
+      <label class="relative block">
+        <SearchIcon class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-zinc-500" />
         <Input
           v-model="query"
           type="search"
           enterkeyhint="search"
-          placeholder="Поиск блюда"
-          class="flex-1"
+          placeholder="Поиск рецептов"
+          aria-label="Поиск рецептов"
+          class="h-11 rounded-2xl border-white/10 bg-[#171a20] pr-4 pl-10 text-[15px] text-white placeholder:text-zinc-500"
         />
-
-        <Button variant="outline" size="icon" aria-label="Сканировать штрих-код" @click="scanning = true">
-          <ScanBarcodeIcon class="size-4" />
-        </Button>
-
-        <Button variant="outline" @click="openCustom">
-          Новое
-        </Button>
-      </div>
+      </label>
     </header>
 
-    <div class="flex shrink-0 items-center gap-2 border-b border-border pb-3 pl-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger as-child>
-          <button
-            type="button"
-            class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground"
-            :aria-label="`Вид: ${viewModeName(view)}`"
-          >
-            <component :is="viewIcon" class="size-4" />
-          </button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="start">
-          <DropdownMenuRadioGroup :model-value="view" @update:model-value="chooseView">
-            <DropdownMenuRadioItem v-for="mode in viewModes" :key="mode.id" :value="mode.id">
-              <component :is="viewIcons[mode.id]" class="size-4" />
-              {{ mode.name }}
-            </DropdownMenuRadioItem>
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <div class="scrollbar-none min-w-0 flex-1 overflow-x-auto">
-        <div class="flex w-max gap-2 pr-4">
-          <button
-            v-for="chip in chips"
-            :key="chip.id"
-            type="button"
-            :class="cn(
-              'rounded-full border px-3 py-1.5 text-xs whitespace-nowrap',
-              category === chip.id
-                ? 'border-transparent bg-primary text-primary-foreground'
-                : 'border-border text-muted-foreground',
-            )"
-            @click="category = chip.id"
-          >
-            {{ chip.name }}
-          </button>
-        </div>
+    <div class="scrollbar-none shrink-0 overflow-x-auto px-4 pb-3">
+      <div class="flex w-max gap-2">
+        <button v-for="item in filters" :key="item.id" type="button" :class="cn('rounded-full border px-3.5 py-2 text-xs font-medium whitespace-nowrap transition-colors', filter === item.id ? 'border-[#2f91ff] bg-[#2f91ff] text-white' : 'border-white/10 bg-[#171a20] text-zinc-400')" @click="filter = item.id">
+          {{ item.name }}
+        </button>
       </div>
     </div>
 
-    <div class="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-6">
-      <template v-if="showsFrequent">
-        <h2 class="pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Часто
-        </h2>
+    <div class="scrollbar-none min-h-0 flex-1 overflow-y-auto px-4 pb-28">
+      <template v-if="filter !== 'mine'">
+        <div class="mb-3 flex items-end justify-between">
+          <div>
+            <p class="text-[11px] font-semibold tracking-[0.16em] text-[#2f91ff] uppercase">Подборка</p>
+            <h1 class="mt-1 text-xl font-bold tracking-tight">Что приготовить</h1>
+          </div>
+          <span class="text-xs text-zinc-500">{{ recipes.length }} рецептов</span>
+        </div>
 
-        <FoodSection
-          :foods="frequent"
-          :photos="customPhotos"
-          :items="items"
-          :mode="view"
-          @change-qty="changeQty"
-        />
+        <ul v-if="recipes.length" class="grid grid-cols-2 gap-3">
+          <RecipeCard v-for="food in recipes" :key="food.id" :food="food" @open="openRecipe(food)" />
+        </ul>
+
+        <div v-else class="rounded-3xl border border-white/8 bg-[#171a20] px-6 py-10 text-center">
+          <p class="font-semibold">Ничего не нашлось</p>
+          <p class="mt-1 text-sm text-zinc-500">Попробуй другой запрос или подборку</p>
+        </div>
       </template>
 
-      <template v-if="custom.length">
-        <h2
-          v-if="showsFrequent || catalog.length"
-          class="pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase"
-        >
-          Своё
-        </h2>
+      <template v-else>
+        <div class="mb-3">
+          <p class="text-[11px] font-semibold tracking-[0.16em] text-[#2f91ff] uppercase">Личная коллекция</p>
+          <h1 class="mt-1 text-xl font-bold tracking-tight">Мои блюда</h1>
+        </div>
 
         <FoodSection
-          :foods="custom"
+          v-if="custom.length"
+          :foods="custom as Portion[]"
           :photos="customPhotos"
           :items="items"
-          :mode="view"
+          mode="large"
           @change-qty="changeQty"
         />
+
+        <div v-else class="rounded-3xl border border-white/8 bg-[#171a20] px-6 py-9 text-center">
+          <p class="font-semibold">Здесь пока пусто</p>
+          <p class="mx-auto mt-1 max-w-56 text-sm leading-5 text-zinc-500">Добавляй свои блюда — они появятся только в твоей коллекции</p>
+          <Button class="mt-4 rounded-full" @click="openCustom">Добавить блюдо</Button>
+        </div>
       </template>
-
-      <template v-if="catalog.length">
-        <h2
-          v-if="showsFrequent || custom.length"
-          class="pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase"
-        >
-          Всё
-        </h2>
-
-        <FoodSection
-          :foods="catalog"
-          :photos="customPhotos"
-          :items="items"
-          :mode="view"
-          @change-qty="changeQty"
-        />
-      </template>
-
-      <div v-if="!custom.length && !catalog.length" class="py-8 text-center">
-        <p class="text-sm text-muted-foreground">
-          {{ emptyText }}
-        </p>
-
-        <Button variant="outline" class="mt-3" @click="openCustom">
-          Добавить своё
-        </Button>
-      </div>
     </div>
 
     <Teleport defer to="#bottom-dock">

@@ -28,12 +28,12 @@ describe('превью блюда', () => {
   });
 
   it('берёт фото из каталога', async () => {
-    const wrapper = mountThumb({ name: 'Ангус-кебаб', foodId: 'angus-kebab', zoomable: true });
+    const wrapper = mountThumb({ name: 'Лосось с лапшой', foodId: 'thai-salmon-noodles', zoomable: true });
 
     await wrapper.find('img').trigger('click');
     await flushPromises();
 
-    expect(zoomedPhoto()?.getAttribute('src')).toBe('/foods/angus-kebab.webp');
+    expect(zoomedPhoto()?.getAttribute('src')).toBe('/foods/thai-salmon-noodles.webp');
   });
 
   it('без разрешения на увеличение остаётся картинкой', async () => {

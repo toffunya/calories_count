@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckIcon } from '@lucide/vue';
+import { CheckIcon, FlameIcon } from '@lucide/vue';
 import { computed } from 'vue';
 import { formatNumber } from '@/shared/lib';
 
@@ -19,7 +19,12 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
 <template>
   <section class="rounded-3xl border border-white/[0.08] bg-[#171a1f] p-[18px]">
     <div class="flex items-center justify-between gap-4 text-xs text-[#8f949d]">
-      <span>{{ headline }}</span>
+      <span class="inline-flex items-center gap-2">
+        <span class="flex size-7 items-center justify-center rounded-lg bg-[#2388ff]/[0.12] text-[#63aaff]">
+          <FlameIcon class="size-4" stroke-width="2" aria-hidden="true" />
+        </span>
+        {{ headline }}
+      </span>
       <span
         class="inline-flex items-center gap-1.5 text-[11px] font-bold"
         :class="isOver ? 'text-[#ff6b6b]' : 'text-[#74df83]'"

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Backup, BackupMode } from '@/shared/db';
+import { DownloadIcon, Trash2Icon, UploadIcon } from '@lucide/vue';
 import { Button, downloadFile, toast, useConfirm } from 'shonk-ui';
-import { ref, useTemplateRef } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   applyBackup,
@@ -11,9 +12,14 @@ import {
   readBackup,
   wipeAllData,
 } from '@/shared/db';
+import { useLocale } from '@/shared/lib';
 
 const router = useRouter();
 const confirmation = useConfirm();
+const { isEnglish } = useLocale();
+const copy = computed(() => isEnglish.value
+  ? { export: 'Export backup', import: 'Import backup', loaded: 'Backup imported', replace: 'Replace all', merge: 'Add to current', cancel: 'Cancel', erase: 'Erase all data', file: 'File contains', warning: 'Replace deletes current data. Add keeps your current profile.', confirm: 'Profile, diary, dishes and weight history will be erased from this device.', eraseAction: 'Erase' }
+  : { export: 'Выгрузить копию', import: 'Загрузить копию', loaded: 'Копия загружена', replace: 'Заменить всё', merge: 'Дополнить', cancel: 'Отмена', erase: 'Стереть все данные', file: 'В файле', warning: '«Заменить всё» удалит текущие данные. «Дополнить» сохранит нынешний профиль.', confirm: 'Профиль, дневник, свои блюда и история веса будут стёрты с этого телефона.', eraseAction: 'Стереть' });
 
 const picker = useTemplateRef<HTMLInputElement>('picker');
 const pending = ref<Backup | null>(null);
@@ -57,7 +63,7 @@ async function restore(mode: BackupMode) {
   try {
     await applyBackup(backup, mode);
     pending.value = null;
-    toast('Копия загружена');
+    toast(copy.value.loaded);
   }
   finally {
     busy.value = false;
@@ -71,8 +77,8 @@ async function wipe() {
 
 function askToWipe() {
   confirmation.require({
-    message: 'Профиль, дневник, свои блюда и история веса будут стёрты с этого телефона. Данные хранятся только здесь, восстановить их будет неоткуда — если копия ещё не выгружена, сначала сделай её.',
-    acceptButtonText: 'Стереть',
+    message: copy.value.confirm,
+    acceptButtonText: copy.value.eraseAction,
     accept: () => {
       void wipe();
     },
@@ -82,13 +88,17 @@ function askToWipe() {
 
 <template>
   <div class="flex flex-col gap-3">
-    <Button type="button" variant="outline" @click="saveToFile">
-      Выгрузить копию
-    </Button>
+    <div class="grid grid-cols-2 gap-2">
+      <Button type="button" variant="outline" class="h-auto flex-col gap-2 py-3" @click="saveToFile">
+        <DownloadIcon class="size-5 text-[#64aaff]" />
+        {{ copy.export }}
+      </Button>
 
-    <Button type="button" variant="outline" @click="picker?.click()">
-      Загрузить копию
-    </Button>
+      <Button type="button" variant="outline" class="h-auto flex-col gap-2 py-3" @click="picker?.click()">
+        <UploadIcon class="size-5 text-[#71e18f]" />
+        {{ copy.import }}
+      </Button>
+    </div>
 
     <input
       ref="picker"
@@ -100,28 +110,29 @@ function askToWipe() {
 
     <div v-if="pending" class="flex flex-col gap-3 rounded-lg border border-border bg-secondary p-4">
       <p class="text-sm text-foreground">
-        В файле {{ describeBackup(pending) }}.
+        {{ copy.file }} {{ describeBackup(pending) }}.
       </p>
       <p class="text-xs text-muted-foreground">
-        «Заменить всё» сотрёт то, что накоплено сейчас. «Дополнить» добавит записи к текущим, а профиль оставит нынешний.
+        {{ copy.warning }}
       </p>
 
       <div class="grid grid-cols-2 gap-2">
         <Button type="button" variant="destructive" :loading="busy" @click="restore('replace')">
-          Заменить всё
+          {{ copy.replace }}
         </Button>
         <Button type="button" :loading="busy" @click="restore('merge')">
-          Дополнить
+          {{ copy.merge }}
         </Button>
       </div>
 
       <Button type="button" variant="ghost" @click="pending = null">
-        Отмена
+        {{ copy.cancel }}
       </Button>
     </div>
 
-    <Button type="button" variant="destructive" @click="askToWipe">
-      Стереть все данные
+    <Button type="button" variant="ghost" class="mt-1 text-destructive" @click="askToWipe">
+      <Trash2Icon class="mr-2 size-4" />
+      {{ copy.erase }}
     </Button>
   </div>
 </template>

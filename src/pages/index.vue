@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Entry, Profile } from '@/shared/db';
 import type { DateKey } from '@/shared/lib';
+import { CalendarDaysIcon } from '@lucide/vue';
 import { toast, useConfirm } from 'shonk-ui';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -76,10 +77,23 @@ function editEntry(entry: Entry) {
 
 <template>
   <main class="flex min-h-0 flex-1 flex-col bg-[#0c0e11] text-[#f7f8fa]">
-    <header class="flex shrink-0 items-center px-4 pt-7 pb-3">
-      <h1 class="text-[29px] leading-none font-bold tracking-[-0.04em]">
+    <header class="flex shrink-0 items-center justify-between px-4 pt-3 pb-1">
+      <h1 class="text-[18px] leading-none font-bold tracking-[-0.025em]">
         {{ monthLabel }}
       </h1>
+
+      <label
+        class="relative flex size-9 cursor-pointer items-center justify-center rounded-xl text-[#8f949d] transition-colors hover:bg-white/[0.05] hover:text-[#f7f8fa] focus-within:ring-2 focus-within:ring-[#2388ff]"
+      >
+        <CalendarDaysIcon class="size-5" stroke-width="1.9" aria-hidden="true" />
+        <span class="sr-only">Choose date</span>
+        <input
+          v-model="dateKey"
+          type="date"
+          aria-label="Choose date"
+          class="absolute inset-0 cursor-pointer opacity-0"
+        >
+      </label>
     </header>
 
     <WeekStrip v-model="dateKey" :totals="dailyTotals" :target="target" class="shrink-0 pb-[17px]" />
@@ -100,19 +114,21 @@ function editEntry(entry: Entry) {
 
       <section
         v-else
-        class="mt-3.5 flex min-h-60 flex-col items-center justify-center rounded-3xl border border-white/[0.08] bg-[#171a1f] px-6 py-7 text-center"
+        class="mt-3.5 rounded-3xl border border-white/[0.08] bg-[#171a1f] px-6 py-5 text-center"
       >
-        <img
-          src="/empty-meals.png"
-          alt="Empty plate"
-          class="size-36 object-contain"
-        >
-        <h2 class="mt-2 text-[17px] leading-tight font-semibold tracking-[-0.01em] text-[#f7f8fa]">
-          You haven’t added anything yet
-        </h2>
-        <p class="mt-1.5 max-w-64 text-sm leading-5 text-[#8f949d]">
-          Tap the plus button to add your first meal
-        </p>
+        <div>
+          <img
+            src="/empty-meals.png"
+            alt="Empty plate"
+            class="mx-auto size-28 object-contain"
+          >
+          <h2 class="mt-2 text-[17px] leading-tight font-semibold tracking-[-0.01em] text-[#f7f8fa]">
+            You haven’t added anything yet
+          </h2>
+          <p class="mt-1.5 text-sm leading-5 text-[#8f949d]">
+            Tap + to add your first meal
+          </p>
+        </div>
       </section>
     </div>
   </main>

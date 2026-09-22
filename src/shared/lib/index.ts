@@ -17,6 +17,8 @@ export {
   weekDateKeys,
 } from './date';
 export { readPhoto } from './image';
+export type { AppLocale } from './locale';
+export { setLocale, useLocale } from './locale';
 export { formatNumber, pluralize } from './pluralize';
 export { requestPersistentStorage } from './storage';
 export { useLiveQuery } from './use-live-query';

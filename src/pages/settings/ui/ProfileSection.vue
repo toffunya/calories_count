@@ -10,9 +10,13 @@ import {
   ProfileFields,
   saveProfile,
 } from '@/entities/profile';
-import { formatNumber } from '@/shared/lib';
+import { formatNumber, useLocale } from '@/shared/lib';
 
 const props = defineProps<{ profile: Profile }>();
+const { isEnglish } = useLocale();
+const copy = computed(() => isEnglish.value
+  ? { saved: 'Profile saved', calculated: 'Calculated target', manual: 'manual target is active', invalid: 'Age, height or weight is outside a reasonable range.', save: 'Save changes', kcal: 'kcal' }
+  : { saved: 'Профиль сохранён', calculated: 'Расчётная норма', manual: 'сейчас действует ручная норма', invalid: 'Возраст, рост или вес выходят за разумные границы.', save: 'Сохранить изменения', kcal: 'ккал' });
 
 const form = reactive(draftFromProfile(props.profile));
 
@@ -35,7 +39,7 @@ async function submit() {
 
   try {
     await saveProfile(measurements.value);
-    toast('Профиль сохранён');
+    toast(copy.value.saved);
   }
   finally {
     saving.value = false;
@@ -55,16 +59,16 @@ async function submit() {
     />
 
     <p v-if="breakdown" class="text-sm text-muted-foreground">
-      Расчётная норма: <span class="tabular-nums text-foreground">{{ formatNumber(breakdown.target) }} ккал</span>
-      <span v-if="props.profile.targetOverridden"> — сейчас не применяется, норма задана вручную</span>
+      {{ copy.calculated }}: <span class="tabular-nums text-foreground">{{ formatNumber(breakdown.target) }} {{ copy.kcal }}</span>
+      <span v-if="props.profile.targetOverridden"> · {{ copy.manual }}</span>
     </p>
 
     <p v-else class="text-sm text-warning">
-      Возраст, рост или вес выходят за разумные границы.
+      {{ copy.invalid }}
     </p>
 
     <Button type="submit" :disabled="!breakdown || !edited" :loading="saving">
-      Сохранить профиль
+      {{ copy.save }}
     </Button>
   </form>
 </template>

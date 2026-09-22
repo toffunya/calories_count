@@ -22,7 +22,7 @@ import { formatServing, unitName } from '../lib/serving';
 import FoodThumb from './FoodThumb.vue';
 import NutrientStrip from './NutrientStrip.vue';
 
-const props = defineProps<{ foodId?: string; busy?: boolean }>();
+const props = defineProps<{ foodId?: string; busy?: boolean; cameraPreferred?: boolean }>();
 
 const draft = defineModel<CustomDraft>({ required: true });
 
@@ -154,7 +154,13 @@ async function pickPhoto(event: Event) {
           <label :class="buttonVariants({ variant: 'outline', size: 'sm' })">
             <CameraIcon class="size-4" />
             {{ draft.photo ? 'Заменить' : 'Снять или выбрать' }}
-            <input type="file" accept="image/*" class="sr-only" @change="pickPhoto">
+            <input
+              type="file"
+              accept="image/*"
+              :capture="props.cameraPreferred ? 'environment' : undefined"
+              class="sr-only"
+              @change="pickPhoto"
+            >
           </label>
 
           <button

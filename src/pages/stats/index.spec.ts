@@ -50,12 +50,15 @@ afterEach(() => {
 });
 
 describe('экран статистики', () => {
-  it('рисует столбик на каждый день окна', () => {
-    expect(mount(StatsView).findAll('button')).toHaveLength(7);
+  it('рисует столбик на каждый день недели', () => {
+    expect(mount(StatsView).find('[aria-label="Калории за неделю"]').findAll('button')).toHaveLength(7);
   });
 
-  it('без записей показывает пустое состояние', () => {
-    expect(mount(StatsView).text()).toContain('За эту неделю записей пока нет');
+  it('без записей ясно показывает нулевые метрики', () => {
+    const text = mount(StatsView).text();
+
+    expect(text).toContain('0 из 7 дней заполнено');
+    expect(text).toContain('Пустые дни не занижают результат');
   });
 
   it('среднее считает только по дням с записями', () => {
@@ -63,36 +66,42 @@ describe('экран статистики', () => {
 
     const text = mount(StatsView).text();
 
-    expect(text).toContain('2 500 ккал');
-    expect(text).toContain('5 000 ккал');
-    expect(text).toContain('2 дня с записями');
+    expect(text).toContain('2 500');
+    expect(text).toContain('5 000');
+    expect(text).toContain('2 из 7 дней заполнено');
   });
 
-  it('отклонение считает от цели за прожитые дни', () => {
+  it('показывает понятный процент среднего от цели', () => {
     entries.value = [entry('2026-08-19', 2000)];
 
-    expect(mount(StatsView).text()).toContain('дефицит 400 ккал ≈ 0,05 кг');
+    expect(mount(StatsView).text()).toContain('83%');
   });
 
   it('не берёт в расчёт дни за пределами окна', () => {
     entries.value = [entry('2026-08-01', 5000), entry('2026-08-19', 2400)];
 
-    expect(mount(StatsView).text()).toContain('1 день с записями');
+    expect(mount(StatsView).text()).toContain('1 из 7 дней заполнено');
   });
 
   it('столбик выше цели окрашен иначе', () => {
     entries.value = [entry('2026-08-19', 3000)];
 
-    const bars = mount(StatsView).findAll('button span');
+    const bars = mount(StatsView).find('[aria-label="Калории за неделю"]').findAll('button > span');
 
-    expect(bars[6].classes()).toContain('bg-destructive');
-    expect(bars[5].classes()).toContain('bg-primary');
+    expect(bars.some(bar => bar.classes().includes('bg-[#ff9f43]'))).toBe(true);
   });
 
   it('тап по столбику открывает этот день', async () => {
     const wrapper = mount(StatsView);
-    await wrapper.findAll('button')[0].trigger('click');
+    await wrapper.find('[aria-label="Калории за неделю"]').findAll('button')[0].trigger('click');
 
-    expect(push).toHaveBeenCalledWith({ path: '/', query: { date: '2026-08-13' } });
+    expect(push).toHaveBeenCalledWith({ path: '/', query: { date: '2026-08-17' } });
+  });
+
+  it('можно открыть предыдущую неделю', async () => {
+    const wrapper = mount(StatsView);
+    await wrapper.get('[aria-label="Предыдущая неделя"]').trigger('click');
+
+    expect(wrapper.text()).toContain('Прошлая неделя');
   });
 });

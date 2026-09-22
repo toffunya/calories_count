@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { PlusIcon } from '@lucide/vue';
+import type { AddAction } from '@/widgets/add-fab';
 import { useColorMode, useNow, useWindowSize } from '@vueuse/core';
 import { ConfirmDialog, Toaster } from 'shonk-ui';
 import { computed } from 'vue';
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { RouterView, useRoute, useRouter } from 'vue-router';
+import { AddFab } from '@/widgets/add-fab';
 import { BottomNav } from '@/widgets/bottom-nav';
 
 useColorMode();
 
 const route = useRoute();
+const router = useRouter();
 const now = useNow({ interval: 60_000 });
 const { height: windowHeight, width: windowWidth } = useWindowSize();
 const showsNav = computed(() => route.path !== '/onboarding');
@@ -42,6 +44,23 @@ const homeAddLink = computed(() => {
 
   return date ? { path: '/add', query: { date } } : '/add';
 });
+
+function selectAddAction(action: AddAction) {
+  const date = typeof route.query.date === 'string' ? route.query.date : undefined;
+  const dayQuery = date ? { date } : {};
+
+  if (action === 'barcode') {
+    void router.push({ path: '/add', query: { ...dayQuery, scan: 'barcode' } });
+    return;
+  }
+
+  if (action === 'food-scan') {
+    void router.push({ path: '/add/custom', query: { ...dayQuery, capture: 'food' } });
+    return;
+  }
+
+  void router.push(homeAddLink.value);
+}
 </script>
 
 <template>
@@ -76,25 +95,14 @@ const homeAddLink = computed(() => {
             <RouterView />
 
             <div
-              :class="[
-                isHome
-                  ? 'absolute inset-x-0 bottom-0 z-20 bg-[#0c0e11] pt-2 pb-[max(8px,env(safe-area-inset-bottom))]'
-                  : 'shrink-0',
-              ]"
+              class="absolute inset-x-0 bottom-0 z-20 pt-2 pb-[max(18px,env(safe-area-inset-bottom))]"
             >
               <div id="bottom-dock" />
 
-              <BottomNav v-if="showsNav" :home="isHome" />
-
-              <RouterLink
-                v-if="isHome"
-                :to="homeAddLink"
-                aria-label="Add food"
-                class="absolute right-3 bottom-[max(13px,env(safe-area-inset-bottom))] flex size-14 items-center justify-center rounded-full bg-[#2388ff] text-white shadow-[0_12px_28px_rgba(35,136,255,0.38)] transition-transform active:scale-95"
-              >
-                <PlusIcon class="size-7" stroke-width="2.2" />
-              </RouterLink>
+              <BottomNav v-if="showsNav" />
             </div>
+
+            <AddFab v-if="showsNav" @select="selectAddAction" />
           </div>
 
           <ConfirmDialog />
