@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.0 (2026-09-22)
+
+- redesign the Today screen and mobile preview shell [`606e3cfb`](https://github.com/toffunya/calories_count/commit/606e3cfb423f844d93c177ace1869abb3fe5dd37)
+
 ## v0.5.4 (2026-09-07)
 
 - refactor(entry-row): swipe to delete with the shonk-ui SwipeAction [`9bcf33e2`](https://github.com/tednaaa/calories_count/commit/9bcf33e2ed810800727ebfa4b34c290ae75171ab)
