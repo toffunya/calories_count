@@ -1,6 +1,8 @@
 import type { Food } from './types';
+import { products } from './products';
 
 export const foods: Food[] = [
+  ...products,
   {
     id: 'thai-salmon-noodles',
     name: 'Лосось с тайской лапшой',

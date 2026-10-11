@@ -109,7 +109,7 @@ describe('экран Home', () => {
     const wrapper = mount(TodayView);
 
     expect(wrapper.text()).toContain('Today');
-    expect(wrapper.text()).toContain('You haven’t added anything yet');
+    expect(wrapper.text()).toContain('Пока ничего не добавлено');
   });
 
   it('складывает калории записей', () => {
@@ -182,11 +182,11 @@ describe('экран Home', () => {
     const wrapper = mount(TodayView);
 
     await currentWeekButtons(wrapper)[2].trigger('click');
-    expect(wrapper.text()).toContain('You haven’t added anything yet');
+    expect(wrapper.text()).toContain('Пока ничего не добавлено');
     expect(wrapper.find('[aria-current="date"]').attributes('aria-label')).toContain('August 18');
 
     await currentWeekButtons(wrapper)[3].trigger('click');
-    expect(wrapper.text()).toContain('You haven’t added anything yet');
+    expect(wrapper.text()).toContain('Пока ничего не добавлено');
   });
 
   it('открывает день, указанный в адресе', () => {

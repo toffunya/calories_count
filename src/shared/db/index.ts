@@ -22,5 +22,7 @@ export type {
   Profile,
   Sex,
   Unit,
+  WalkRecord,
+  WaterRecord,
   WeightRecord,
 } from './types';

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ChevronLeftIcon } from '@lucide/vue';
 import { Button, toast } from 'shonk-ui';
 import { computed, ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { createCustomFood, CustomFoodFields, draftToCustomFood, emptyCustomDraft } from '@/entities/food';
+import PageHeader from '@/widgets/page-header/PageHeader.vue';
 
 const router = useRouter();
 
@@ -38,19 +38,7 @@ async function submit() {
 
 <template>
   <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-8">
-    <header class="flex items-center gap-1">
-      <RouterLink
-        to="/settings/foods"
-        class="-ml-2 flex size-10 items-center justify-center rounded-full text-muted-foreground"
-        aria-label="Назад к своим блюдам"
-      >
-        <ChevronLeftIcon class="size-5" />
-      </RouterLink>
-
-      <h1 class="text-xl font-semibold text-foreground">
-        Новое блюдо
-      </h1>
-    </header>
+    <PageHeader title="Новое блюдо" back-to="/settings/foods" />
 
     <p class="mt-1 text-sm text-muted-foreground">
       Появится в сетке «Добавить». В дневник ничего не запишется.

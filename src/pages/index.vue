@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Entry, Profile } from '@/shared/db';
+import type { Entry, Profile, WaterRecord } from '@/shared/db';
 import type { DateKey } from '@/shared/lib';
-import { CalendarDaysIcon } from '@lucide/vue';
+import { ChevronDownIcon, GlassWaterIcon, SparklesIcon, UtensilsIcon } from '@lucide/vue';
 import { toast, useConfirm } from 'shonk-ui';
-import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import {
   entriesFrom,
   entriesOfDay,
@@ -15,9 +15,10 @@ import {
   totalsByDate,
 } from '@/entities/entry';
 import { photosById, useCustomFoods } from '@/entities/food';
+import { setWaterGlasses, WATER_GOAL_GLASSES, waterOfDay } from '@/entities/health';
 import { loadProfile } from '@/entities/profile';
-import { fromDateKey, requestedDateKey, shiftDateKey, toDateKey, useLiveQuery } from '@/shared/lib';
-import { DayProgress } from '@/widgets/day-progress';
+import { formatNumber, fromDateKey, requestedDateKey, shiftDateKey, toDateKey, useLiveQuery } from '@/shared/lib';
+import DaySummary from '@/widgets/day-progress/ui/DaySummary.vue';
 import { WeekStrip } from '@/widgets/week-strip';
 
 const route = useRoute();
@@ -35,12 +36,15 @@ const entries = useLiveQuery<Entry[]>(() => entriesOfDay(dateKey.value), [], [da
 const historyEntries = useLiveQuery<Entry[]>(() => entriesFrom(shiftDateKey(toDateKey(), -185)), []);
 const profile = useLiveQuery<Profile | undefined>(() => loadProfile(), undefined);
 const customFoods = useCustomFoods();
+const waterRecord = useLiveQuery<WaterRecord | undefined>(() => waterOfDay(dateKey.value), undefined, [dateKey]);
+const foodOpen = ref(true);
 
 const customPhotos = computed(() => photosById(customFoods.value));
 
 const eaten = computed(() => totalKcal(entries.value));
 const target = computed(() => profile.value?.targetKcal ?? 0);
 const dailyTotals = computed(() => totalsByDate(historyEntries.value));
+const waterGlasses = computed(() => waterRecord.value?.glasses ?? 0);
 const monthLabel = computed(() => {
   const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(fromDateKey(dateKey.value));
 
@@ -73,62 +77,86 @@ function askToRemove(entry: Entry) {
 function editEntry(entry: Entry) {
   void router.push(`/entry/${entry.id}`);
 }
+
+function toggleGlass(index: number) {
+  const next = waterGlasses.value === index + 1 ? index : index + 1;
+  void setWaterGlasses(dateKey.value, next);
+}
 </script>
 
 <template>
-  <main class="flex min-h-0 flex-1 flex-col bg-[#0c0e11] text-[#f7f8fa]">
-    <header class="flex shrink-0 items-center justify-between px-4 pt-3 pb-1">
-      <h1 class="text-[18px] leading-none font-bold tracking-[-0.025em]">
+  <main class="scrollbar-none min-h-0 flex-1 overflow-y-auto bg-[var(--ios-background)] text-[var(--ios-label)]">
+    <header class="sticky top-0 z-40 flex shrink-0 items-center justify-between bg-[var(--ios-background)] px-4 pt-3 pb-1">
+      <h1 class="home-month text-[18px] leading-none font-bold tracking-[-0.025em]">
         {{ monthLabel }}
       </h1>
 
-      <label
-        class="relative flex size-9 cursor-pointer items-center justify-center rounded-xl text-[#8f949d] transition-colors hover:bg-white/[0.05] hover:text-[#f7f8fa] focus-within:ring-2 focus-within:ring-[#2388ff]"
-      >
-        <CalendarDaysIcon class="size-5" stroke-width="1.9" aria-hidden="true" />
-        <span class="sr-only">Choose date</span>
-        <input
-          v-model="dateKey"
-          type="date"
-          aria-label="Choose date"
-          class="absolute inset-0 cursor-pointer opacity-0"
-        >
-      </label>
+      <RouterLink :to="{ path: '/chat', query: { date: dateKey } }" aria-label="Открыть чат помощника" class="grid size-10 place-items-center rounded-xl bg-[var(--ios-blue-tint)] text-[var(--ios-blue)] hover:bg-[var(--ios-blue-tint)] focus-visible:ring-2">
+        <SparklesIcon class="size-5" />
+      </RouterLink>
     </header>
 
     <WeekStrip v-model="dateKey" :totals="dailyTotals" :target="target" class="shrink-0 pb-[17px]" />
 
-    <div class="scrollbar-none min-h-0 flex-1 overflow-y-auto px-4 pb-28">
-      <DayProgress :eaten="eaten" :target="target" />
+    <div class="px-4 pb-28">
+      <DaySummary :entries="entries" :target="target" :date="dateKey" />
 
-      <ul v-if="entries.length" class="mt-3.5 space-y-2.5">
-        <EntryRow
-          v-for="entry in entries"
-          :key="entry.id"
-          :entry="entry"
-          :photo="customPhotos.get(entry.foodId ?? '')"
-          @remove="askToRemove"
-          @edit="editEntry"
-        />
-      </ul>
-
-      <section
-        v-else
-        class="mt-3.5 rounded-3xl border border-white/[0.08] bg-[#171a1f] px-6 py-5 text-center"
-      >
+      <section class="mt-3.5 rounded-[16px] border border-white/[0.08] bg-[var(--ios-surface)] p-4">
         <div>
-          <img
-            src="/empty-meals.png"
-            alt="Empty plate"
-            class="mx-auto size-28 object-contain"
-          >
-          <h2 class="mt-2 text-[17px] leading-tight font-semibold tracking-[-0.01em] text-[#f7f8fa]">
-            You haven’t added anything yet
-          </h2>
-          <p class="mt-1.5 text-sm leading-5 text-[#8f949d]">
-            Tap + to add your first meal
-          </p>
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <GlassWaterIcon class="size-4 text-[var(--ios-blue)]" />
+              <span class="text-xs font-semibold">Вода</span>
+              <span class="text-[12px] font-semibold text-[var(--ios-blue)]">{{ waterGlasses * 250 }} мл</span>
+            </div>
+            <span class="text-[12px] text-[var(--ios-secondary)]">{{ waterGlasses }} / {{ WATER_GOAL_GLASSES }} стаканов</span>
+          </div>
+          <div class="mt-3 grid grid-cols-8 gap-1.5">
+            <button
+              v-for="index in WATER_GOAL_GLASSES"
+              :key="index"
+              type="button"
+              :aria-label="`${index} стакан`"
+              :aria-pressed="index <= waterGlasses"
+              class="grid h-9 place-items-center rounded-xl border transition-all active:scale-90"
+              :class="index <= waterGlasses ? 'border-[var(--ios-blue)]/40 bg-[var(--ios-blue-tint)] text-[var(--ios-blue)]' : 'border-white/[0.06] bg-white/[0.025] text-[var(--ios-secondary)]'"
+              @click="toggleGlass(index - 1)"
+            >
+              <GlassWaterIcon class="size-[17px]" :fill="index <= waterGlasses ? 'currentColor' : 'none'" />
+            </button>
+          </div>
         </div>
+      </section>
+
+      <section aria-label="Еда" class="mt-3.5 overflow-hidden rounded-[16px] border border-white/[0.08] bg-[var(--ios-surface)]">
+        <button type="button" :aria-expanded="foodOpen" aria-controls="food-entries" class="flex w-full items-center gap-3 px-4 py-3 text-left" @click="foodOpen = !foodOpen">
+          <span class="grid size-9 place-items-center rounded-xl bg-[var(--ios-orange-tint)] text-[var(--ios-orange)]"><UtensilsIcon class="size-[18px]" /></span>
+          <span class="flex-1">
+            <span class="block text-sm font-bold">Еда</span>
+            <span class="mt-0.5 block text-[12px] text-[var(--ios-secondary)]">{{ entries.length }} записей · {{ formatNumber(eaten) }} ккал</span>
+          </span>
+          <ChevronDownIcon class="size-4 text-[var(--ios-secondary)] transition-transform" :class="foodOpen ? 'rotate-180' : ''" />
+        </button>
+
+        <template v-if="foodOpen">
+          <ul v-if="entries.length" id="food-entries" class="divide-y divide-white/[0.08] border-t border-white/[0.08]">
+            <EntryRow
+              v-for="entry in entries"
+              :key="entry.id"
+              :entry="entry"
+              grouped
+              :photo="customPhotos.get(entry.foodId ?? '')"
+              @remove="askToRemove"
+              @edit="editEntry"
+            />
+          </ul>
+
+          <div v-else id="food-entries" class="border-t border-white/[0.08] px-6 py-5 text-center">
+            <img src="/empty-meals.png" alt="Empty plate" class="mx-auto size-24 object-contain">
+            <h2 class="mt-1 text-[16px] leading-tight font-semibold text-[var(--ios-label)]">Пока ничего не добавлено</h2>
+            <p class="mt-1 text-xs text-[var(--ios-secondary)]">Нажми +, чтобы добавить еду</p>
+          </div>
+        </template>
       </section>
     </div>
   </main>

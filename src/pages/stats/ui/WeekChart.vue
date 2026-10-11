@@ -27,8 +27,8 @@ function heightPercent(kcal: number): string {
         class="pointer-events-none absolute inset-x-0 z-10 flex items-center"
         :style="{ bottom: heightPercent(props.target) }"
       >
-        <span class="h-px flex-1 border-t border-dashed border-[#59606b]" />
-        <span class="ml-2 rounded-md bg-[#2a3039] px-1.5 py-0.5 text-[9px] font-medium text-[#aeb4bd]">
+        <span class="h-px flex-1 border-t border-dashed border-[var(--ios-secondary)]" />
+        <span class="ml-2 rounded-md bg-[var(--ios-elevated)] px-1.5 py-0.5 text-[12px] font-medium text-[var(--ios-secondary)]">
           цель {{ formatNumber(props.target) }}
         </span>
       </div>
@@ -44,13 +44,13 @@ function heightPercent(kcal: number): string {
       >
         <span
           v-if="day.kcal > 0"
-          class="absolute inset-x-0 bottom-0 rounded-[9px] bg-[#2d91ff] transition-[height] duration-500 group-active:bg-[#63aaff]"
-          :class="day.kcal > props.target && props.target > 0 ? 'bg-[#ff9f43]' : ''"
+          class="absolute inset-x-0 bottom-0 rounded-[9px] bg-[var(--ios-blue)] transition-[height] duration-500 group-active:bg-[var(--ios-blue)]"
+          :class="day.kcal > props.target && props.target > 0 ? 'bg-[var(--ios-orange)]' : ''"
           :style="{ height: heightPercent(day.kcal) }"
         />
         <span
           v-if="day.kcal > 0"
-          class="relative z-20 mb-2 -rotate-90 text-[9px] font-semibold tabular-nums text-white"
+          class="relative z-20 mb-2 -rotate-90 text-[12px] font-semibold tabular-nums text-white"
         >
           {{ formatNumber(day.kcal) }}
         </span>
@@ -62,8 +62,8 @@ function heightPercent(kcal: number): string {
         v-for="day in props.days"
         :key="day.date"
         :class="cn(
-          'flex flex-col items-center text-center text-[10px] leading-4',
-          isToday(day.date) ? 'font-semibold text-[#63aaff]' : 'text-[#737984]',
+          'flex flex-col items-center text-center text-[12px] leading-4',
+          isToday(day.date) ? 'font-semibold text-[var(--ios-blue)]' : 'text-[var(--ios-secondary)]',
         )"
       >
         <span class="uppercase">{{ formatWeekday(day.date).replace('.', '') }}</span>

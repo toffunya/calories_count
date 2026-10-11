@@ -90,12 +90,12 @@ function askToWipe() {
   <div class="flex flex-col gap-3">
     <div class="grid grid-cols-2 gap-2">
       <Button type="button" variant="outline" class="h-auto flex-col gap-2 py-3" @click="saveToFile">
-        <DownloadIcon class="size-5 text-[#64aaff]" />
+        <DownloadIcon class="size-5 text-[var(--ios-blue)]" />
         {{ copy.export }}
       </Button>
 
       <Button type="button" variant="outline" class="h-auto flex-col gap-2 py-3" @click="picker?.click()">
-        <UploadIcon class="size-5 text-[#71e18f]" />
+        <UploadIcon class="size-5 text-[var(--ios-green)]" />
         {{ copy.import }}
       </Button>
     </div>

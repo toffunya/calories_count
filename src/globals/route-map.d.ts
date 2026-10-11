@@ -59,11 +59,25 @@ declare module 'vue-router/auto-routes' {
       { id: ParamValue<false> },
       | never
     >,
+    '/chat': RouteRecordInfo<
+      '/chat',
+      '/chat',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/entry/[id]': RouteRecordInfo<
       '/entry/[id]',
       '/entry/:id',
       { id: ParamValue<true> },
       { id: ParamValue<false> },
+      | never
+    >,
+    '/nutrition': RouteRecordInfo<
+      '/nutrition',
+      '/nutrition',
+      Record<never, never>,
+      Record<never, never>,
       | never
     >,
     '/onboarding/': RouteRecordInfo<
@@ -152,9 +166,21 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/pages/chat.vue': {
+      routes:
+        | '/chat'
+      views:
+        | never
+    }
     'src/pages/entry/[id].vue': {
       routes:
         | '/entry/[id]'
+      views:
+        | never
+    }
+    'src/pages/nutrition.vue': {
+      routes:
+        | '/nutrition'
       views:
         | never
     }

@@ -9,6 +9,8 @@ function backup(overrides: Partial<Backup> = {}): Backup {
     entries: [],
     customFoods: [],
     weightLog: [],
+    waterLog: [],
+    walks: [],
     ...overrides,
   };
 }
@@ -55,7 +57,7 @@ describe('describeBackup', () => {
   it('перечисляет, что лежит внутри копии', () => {
     const described = describeBackup(backup({ entries: [entry], profile: profile as never }));
 
-    expect(described).toBe('записей: 1, своих блюд: 0, профиль: есть, замеров веса: 0');
+    expect(described).toBe('записей: 1, своих блюд: 0, профиль: есть, замеров веса: 0, дней с водой: 0, прогулок: 0');
   });
 
   it('считает свои блюда', () => {
@@ -171,6 +173,8 @@ describe('readBackup', () => {
       'exportedAt',
       'profile',
       'version',
+      'walks',
+      'waterLog',
       'weightLog',
     ]);
   });

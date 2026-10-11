@@ -81,7 +81,7 @@ function changeQty(item: CartItem, qty: number) {
       </button>
 
       <Button :loading="props.saving" @click="emit('confirm')">
-        Подтвердить
+        В дневник
       </Button>
     </div>
   </section>

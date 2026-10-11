@@ -1,0 +1,12 @@
+# Calorie tracker
+
+## UI preferences — 2026-10-09
+Latest user preference: preserve the Apple iOS-style dark app palette; do not restyle the app around the poster cards. Recipe cards repeat two small cards then one wide card with minimal text. Product cards show only a photo and kcal; names and portions remain accessible. Keep centered 18px page titles. Catalog and Profile have no back arrow. Catalog has Recipes and Products sections. Profile order is daily goal, weight goal, steps. Keep accessible Vue controls and real diary data; do not claim native UIKit or Apple Health integration. Semantic palette lives in src/assets/css/ios.css. Stats opens the Weight view first, with current weight, adult BMI range by height, user-defined goal, editable measurements and history. BMI range is a broad adult screening reference, not a personal ideal weight. Preserve existing user changes.
+
+Latest product-card preference: adapt the soft reference with pale compact cards, complete product photographs, calories and a plus control; retain the dark app palette. Selected quantities can be reduced and committed to the diary on the main screen. Do not copy the full reference UI or add verbose product copy.
+
+Latest catalogue preference (2026-10-10): product cards are dark, exactly two per row, with genuine transparent product cutouts, calories per displayed gram portion and inline minus/quantity/plus after selection. Search is pill-shaped with focus/input/illustrated empty states and locally stored recent queries that can be replayed or cleared. This supersedes the earlier pale product-card preference.
+
+Latest search preference (2026-10-10): focus history overlays the catalogue without shifting layout, dims only the app screen, uses the heading История, icon-only clear-all and wrapping query chips with individual removal. Search has barcode action for Products and food-photo/manual entry for Recipes. Recipe filters include Мои; product filters include Молочные продукты, Протеиновое and ПП. Catalogue sections use icon/text tabs with a blue underline.
+
+Latest scrolling preference: shared page titles stay at the top; downward scrolling smoothly moves the centered title to the left, upward scrolling restores its centered position. Back-button titles keep clearance. Catalogue search, section tabs, categories and cards share one vertical scroll area. Respect reduced motion. Home already-left month title stays pinned.

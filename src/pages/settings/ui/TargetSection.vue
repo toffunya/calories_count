@@ -46,7 +46,7 @@ async function reset() {
 
 <template>
   <div class="flex flex-col gap-3">
-    <p class="text-[11px] font-semibold text-muted-foreground">{{ copy.current }}</p>
+    <p class="text-[12px] font-semibold text-muted-foreground">{{ copy.current }}</p>
     <p class="text-3xl font-semibold tabular-nums text-foreground">
       {{ formatNumber(props.profile.targetKcal) }}
       <span class="text-sm font-normal text-muted-foreground">{{ copy.kcal }}</span>

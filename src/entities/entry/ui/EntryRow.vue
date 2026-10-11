@@ -7,7 +7,7 @@ import { foodById, FoodThumb, formatAmount } from '@/entities/food';
 import { formatNumber, formatTime } from '@/shared/lib';
 import { entryAmount, entryKcal } from '../lib/entry';
 
-const props = defineProps<{ entry: Entry; photo?: string }>();
+const props = defineProps<{ entry: Entry; photo?: string; grouped?: boolean }>();
 
 const emit = defineEmits<{
   remove: [entry: Entry];
@@ -24,7 +24,8 @@ const displayName = computed(() => foodById(props.entry.foodId ?? '')?.name ?? p
     as="li"
     :trigger-threshold="0.3"
     right-action-aria-label="Delete"
-    class="overflow-hidden rounded-[18px] border border-white/[0.08] bg-[#171a1f] [&>[data-slot=swipe-action-content]]:bg-[#171a1f]"
+    class="overflow-hidden bg-[var(--ios-surface)] [&>[data-slot=swipe-action-content]]:bg-[var(--ios-surface)]"
+    :class="grouped ? '' : 'rounded-[16px] border border-white/[0.08]'"
     @trigger="emit('remove', props.entry)"
   >
     <template #right-action>
@@ -36,20 +37,20 @@ const displayName = computed(() => foodById(props.entry.foodId ?? '')?.name ?? p
 
       <div class="flex min-w-0 flex-1 self-stretch flex-col justify-between py-1">
         <div class="flex items-start justify-between gap-2">
-          <p class="truncate pr-1 text-base font-semibold text-[#f7f8fa]">
+          <p class="truncate pr-1 text-base font-semibold text-[var(--ios-label)]">
             {{ displayName }}
           </p>
-          <span class="shrink-0 rounded-lg bg-[#252930] px-2 py-1 text-[10px] tabular-nums text-[#9297a0]">
+          <span class="shrink-0 rounded-lg bg-[var(--ios-elevated)] px-2 py-1 text-[12px] tabular-nums text-[var(--ios-secondary)]">
             {{ formatTime(entry.createdAt) }}
           </span>
         </div>
 
-        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#8f949d]">
-          <span><strong class="font-bold text-[#ff974d]">{{ formatNumber(kcal) }} kcal</strong></span>
-          <span v-if="amount !== undefined" class="flex items-center gap-1.5 before:size-1 before:rounded-full before:bg-[#74df83]">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--ios-secondary)]">
+          <span><strong class="font-bold text-[var(--ios-orange)]">{{ formatNumber(kcal) }} kcal</strong></span>
+          <span v-if="amount !== undefined" class="flex items-center gap-1.5 before:size-1 before:rounded-full before:bg-[var(--ios-green)]">
             {{ formatAmount(amount, entry.unit) }}
           </span>
-          <span v-if="entry.qty !== 1" class="flex items-center gap-1.5 before:size-1 before:rounded-full before:bg-[#74df83]">
+          <span v-if="entry.qty !== 1" class="flex items-center gap-1.5 before:size-1 before:rounded-full before:bg-[var(--ios-green)]">
             ×{{ entry.qty }}
           </span>
         </div>

@@ -11,11 +11,20 @@ export function nextProfile(current: Profile | undefined, input: ProfileInput, n
   return {
     id: PROFILE_ID,
     ...input,
+    targetWeightKg: current?.targetWeightKg,
     targetKcal: keepsManualTarget ? current.targetKcal : calcTarget(input).target,
     targetOverridden: keepsManualTarget,
     createdAt: current?.createdAt ?? now,
     updatedAt: now,
   };
+}
+
+export async function setTargetWeight(targetWeightKg: number | undefined): Promise<void> {
+  const current = await loadProfile();
+
+  if (current) {
+    await db.profile.put({ ...current, targetWeightKg, updatedAt: Date.now() });
+  }
 }
 
 export function withManualTarget(profile: Profile, targetKcal: number, now: number): Profile {

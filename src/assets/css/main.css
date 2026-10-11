@@ -3,6 +3,7 @@
 @import "shonk-ui";
 
 @import "./base.css";
+@import "./ios.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

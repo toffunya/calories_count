@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { CustomFood } from '@/shared/db';
-import { ChevronLeftIcon } from '@lucide/vue';
 import { Badge, Button, Switch, toast } from 'shonk-ui';
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   CustomFoodFields,
   draftFromCustomFood,
@@ -15,6 +14,7 @@ import {
   productToDraft,
 } from '@/entities/food';
 import { formatDayLabel, isToday, requestedDateKey } from '@/shared/lib';
+import PageHeader from '@/widgets/page-header/PageHeader.vue';
 import { addCustomFoodToDay, addCustomOnceToDay } from './lib/custom';
 
 const route = useRoute();
@@ -123,19 +123,7 @@ async function submit() {
 
 <template>
   <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-6">
-    <header class="flex items-center gap-1">
-      <RouterLink
-        :to="{ path: '/add', query: dayQuery }"
-        class="-ml-2 flex size-10 items-center justify-center rounded-full text-muted-foreground"
-        aria-label="Назад к каталогу"
-      >
-        <ChevronLeftIcon class="size-5" />
-      </RouterLink>
-
-      <h1 class="text-xl font-semibold text-foreground">
-        {{ capturesFood ? 'Скан еды' : 'Своё блюдо' }}
-      </h1>
-    </header>
+    <PageHeader :title="capturesFood ? 'Скан еды' : 'Своё блюдо'" :back-to="{ path: '/add', query: dayQuery }" />
 
     <div v-if="!showsToday" class="mt-3 flex items-center gap-2">
       <Badge variant="secondary">

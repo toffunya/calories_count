@@ -64,12 +64,29 @@ export interface Profile {
   age: number;
   heightCm: number;
   weightKg: number;
+  targetWeightKg?: number;
   activity: ActivityLevel;
   goal: Goal;
   targetKcal: number;
   targetOverridden: boolean;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface WaterRecord {
+  date: DateKey;
+  glasses: number;
+  glassMl: number;
+  updatedAt: number;
+}
+
+export interface WalkRecord {
+  id: string;
+  date: DateKey;
+  startedAt: number;
+  endedAt?: number;
+  steps: number;
+  burnedKcal: number;
 }
 
 export interface WeightRecord {

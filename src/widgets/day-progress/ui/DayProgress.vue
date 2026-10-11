@@ -7,6 +7,7 @@ const props = defineProps<{
   eaten: number;
   target: number;
   compact?: boolean;
+  embedded?: boolean;
 }>();
 
 const ratio = computed(() => (props.target > 0 ? props.eaten / props.target : 0));
@@ -17,17 +18,17 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
 </script>
 
 <template>
-  <section class="rounded-3xl border border-white/[0.08] bg-[#171a1f] p-[18px]">
-    <div class="flex items-center justify-between gap-4 text-xs text-[#8f949d]">
+  <section class="bg-[var(--ios-surface)] p-[18px]" :class="embedded ? '' : 'rounded-3xl border border-white/[0.08]'">
+    <div class="flex items-center justify-between gap-4 text-xs text-[var(--ios-secondary)]">
       <span class="inline-flex items-center gap-2">
-        <span class="flex size-7 items-center justify-center rounded-lg bg-[#2388ff]/[0.12] text-[#63aaff]">
+        <span class="flex size-7 items-center justify-center rounded-lg bg-[var(--ios-blue)]/[0.12] text-[var(--ios-blue)]">
           <FlameIcon class="size-4" stroke-width="2" aria-hidden="true" />
         </span>
         {{ headline }}
       </span>
       <span
-        class="inline-flex items-center gap-1.5 text-[11px] font-bold"
-        :class="isOver ? 'text-[#ff6b6b]' : 'text-[#74df83]'"
+        class="inline-flex items-center gap-1.5 text-[12px] font-bold"
+        :class="isOver ? 'text-[var(--ios-red)]' : 'text-[var(--ios-green)]'"
       >
         <CheckIcon v-if="!isOver" class="size-3.5" stroke-width="2.5" />
         {{ isOver ? 'Over goal' : 'On track' }}
@@ -37,14 +38,14 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
     <div class="mt-4 flex items-baseline gap-2">
       <strong
         class="text-[46px] leading-[0.9] font-extrabold tracking-[-0.06em] tabular-nums"
-        :class="isOver ? 'text-[#ff6b6b]' : 'text-[#f7f8fa]'"
+        :class="isOver ? 'text-[var(--ios-red)]' : 'text-[var(--ios-label)]'"
       >
         {{ formatNumber(Math.abs(remaining)) }}
       </strong>
-      <span class="text-base font-semibold text-[#c8cbd0]">kcal {{ isOver ? 'over' : 'left' }}</span>
+      <span class="text-base font-semibold text-[var(--ios-secondary)]">kcal {{ isOver ? 'over' : 'left' }}</span>
     </div>
 
-    <p class="mt-3 mb-4 text-xs leading-5 text-[#8f949d]">
+    <p class="mt-3 mb-4 text-xs leading-5 text-[var(--ios-secondary)]">
       {{ isOver ? `You are ${formatNumber(Math.abs(remaining))} kcal over today.` : `You can still eat ${formatNumber(remaining)} kcal today.` }}
     </p>
 
@@ -58,15 +59,15 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
 
     <dl class="mt-3.5 grid grid-cols-2">
       <div class="min-w-0 pr-3">
-        <dt class="text-[10px] text-[#8f949d]">Eaten</dt>
-        <dd class="mt-1 text-[13px] font-semibold tabular-nums text-[#e6e8eb]">
+        <dt class="text-[12px] text-[var(--ios-secondary)]">Eaten</dt>
+        <dd class="mt-1 text-[13px] font-semibold tabular-nums text-[var(--ios-label)]">
           {{ formatNumber(eaten) }} kcal
         </dd>
       </div>
 
       <div class="min-w-0 border-l border-white/[0.08] pl-3">
-        <dt class="text-[10px] text-[#8f949d]">Daily goal</dt>
-        <dd class="mt-1 text-[13px] font-semibold tabular-nums text-[#e6e8eb]">
+        <dt class="text-[12px] text-[var(--ios-secondary)]">Daily goal</dt>
+        <dd class="mt-1 text-[13px] font-semibold tabular-nums text-[var(--ios-label)]">
           {{ formatNumber(target) }} kcal
         </dd>
       </div>
@@ -78,27 +79,27 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
 .calorie-progress {
   appearance: none;
   border: 0;
-  background: #2b3038;
+  background: var(--ios-elevated);
 }
 
 .calorie-progress::-webkit-progress-bar {
   border-radius: 999px;
-  background: #2b3038;
+  background: var(--ios-elevated);
 }
 
 .calorie-progress::-webkit-progress-value {
   border-radius: 999px;
-  background: #2388ff;
+  background: var(--ios-blue);
   transition: width 300ms ease;
 }
 
 .calorie-progress::-moz-progress-bar {
   border-radius: 999px;
-  background: #2388ff;
+  background: var(--ios-blue);
 }
 
 .calorie-progress.is-over::-webkit-progress-value,
 .calorie-progress.is-over::-moz-progress-bar {
-  background: #ef4444;
+  background: var(--ios-red);
 }
 </style>

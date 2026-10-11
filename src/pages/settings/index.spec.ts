@@ -30,7 +30,9 @@ const profile = ref<Profile>({
 
 beforeEach(() => {
   setLocale('ru');
-  vi.mocked(useLiveQuery).mockReturnValue(profile);
+  vi.mocked(useLiveQuery).mockImplementation(
+    (_querier, initial) => (Array.isArray(initial) ? ref([]) : profile) as never,
+  );
 });
 
 describe('профиль', () => {
@@ -42,7 +44,8 @@ describe('профиль', () => {
     expect(wrapper.text()).toContain('Профиль');
     expect(wrapper.text()).toContain('2 100');
     expect(wrapper.text()).toContain('85 kg');
-    expect(wrapper.find('input').exists()).toBe(false);
+    expect(wrapper.text()).toContain('Шаги сегодня');
+    expect(wrapper.find('input[aria-label="Шаги вручную"]').exists()).toBe(true);
   });
 
   it('показывает разделы профиля', () => {

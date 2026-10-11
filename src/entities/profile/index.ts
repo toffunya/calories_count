@@ -19,6 +19,7 @@ export {
   resetTargetToCalculated,
   saveProfile,
   setManualTarget,
+  setTargetWeight,
   withCalculatedTarget,
   withManualTarget,
 } from './lib/profile';

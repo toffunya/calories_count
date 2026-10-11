@@ -4,17 +4,18 @@ import { useColorMode, useNow, useWindowSize } from '@vueuse/core';
 import { ConfirmDialog, Toaster } from 'shonk-ui';
 import { computed } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
+import { installStepTrackingLifecycle } from '@/entities/health/lib/step-tracker';
 import { AddFab } from '@/widgets/add-fab';
 import { BottomNav } from '@/widgets/bottom-nav';
 
 useColorMode();
+installStepTrackingLifecycle();
 
 const route = useRoute();
 const router = useRouter();
 const now = useNow({ interval: 60_000 });
 const { height: windowHeight, width: windowWidth } = useWindowSize();
 const showsNav = computed(() => route.path !== '/onboarding');
-const isHome = computed(() => route.path === '/');
 const showsDeviceFrame = computed(() => windowWidth.value >= 520);
 const deviceScale = computed(() => Math.max(0.42, Math.min(
   (windowWidth.value - 48) / 511,
@@ -64,7 +65,7 @@ function selectAddAction(action: AddAction) {
 </script>
 
 <template>
-  <div class="mobile-prototype-stage" :class="{ 'is-framed': showsDeviceFrame }">
+  <div class="mobile-prototype-stage ios-app" :class="{ 'is-framed': showsDeviceFrame }">
     <div
       class="mobile-prototype-scale-box"
       :style="deviceScaleBoxStyle"
@@ -86,13 +87,13 @@ function selectAddAction(action: AddAction) {
           </div>
 
           <div
-            class="relative mx-auto flex h-full w-full flex-col overflow-hidden"
+            id="app-screen"
+            class="relative mx-auto flex h-full w-full flex-col overflow-hidden max-w-md bg-background"
             :class="[
               showsDeviceFrame ? 'pt-[54px]' : 'pt-[env(safe-area-inset-top)]',
-              isHome ? 'max-w-[393px] bg-[#0c0e11]' : 'max-w-md bg-background',
             ]"
           >
-            <RouterView />
+            <RouterView :key="route.path" />
 
             <div
               class="absolute inset-x-0 bottom-0 z-20 pt-2 pb-[max(18px,env(safe-area-inset-bottom))]"
@@ -165,7 +166,7 @@ function selectAddAction(action: AddAction) {
   height: 852px;
   overflow: hidden;
   border-radius: 42px;
-  background: #0c0e11;
+  background: var(--ios-background);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
 }
 

@@ -14,6 +14,12 @@ export interface Food {
   category: CategoryId;
   tags?: string[];
   archived?: boolean;
+  product?: {
+    group: 'yogurt' | 'fruit' | 'snacks' | 'drinks';
+    portionLabel: string;
+    highlight: 'protein' | 'fiber' | 'sugars';
+    sourceUrl: string;
+  };
   recipe?: {
     summary: string;
     timeMinutes: number;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CustomFood, Entry } from '@/shared/db';
-import { ChevronLeftIcon, MinusIcon, PlusIcon } from '@lucide/vue';
+import { MinusIcon, PlusIcon } from '@lucide/vue';
 import { Badge, Button, Switch, toast } from 'shonk-ui';
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
@@ -15,6 +15,7 @@ import {
 } from '@/entities/entry';
 import { CustomFoodFields, emptyCustomDraft, formatServing, loadCustomFood } from '@/entities/food';
 import { formatDayLabel, isToday } from '@/shared/lib';
+import PageHeader from '@/widgets/page-header/PageHeader.vue';
 import { keepEntryAsFood } from './lib/keep';
 
 const route = useRoute('/entry/[id]');
@@ -74,19 +75,7 @@ async function submit() {
 
 <template>
   <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-8">
-    <header class="flex items-center gap-1">
-      <RouterLink
-        :to="{ path: '/', query: dayQuery }"
-        class="-ml-2 flex size-10 items-center justify-center rounded-full text-muted-foreground"
-        aria-label="Назад в день"
-      >
-        <ChevronLeftIcon class="size-5" />
-      </RouterLink>
-
-      <h1 class="text-xl font-semibold text-foreground">
-        Запись
-      </h1>
-    </header>
+    <PageHeader title="Запись" :back-to="{ path: '/', query: dayQuery }" />
 
     <div v-if="entry && !showsToday" class="mt-3">
       <Badge variant="secondary">

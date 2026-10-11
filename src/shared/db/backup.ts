@@ -1,4 +1,4 @@
-import type { Basis, CustomFood, Entry, Grades, Nutrients, Profile, Unit, WeightRecord } from './types';
+import type { Basis, CustomFood, Entry, Grades, Nutrients, Profile, Unit, WalkRecord, WaterRecord, WeightRecord } from './types';
 import { toDateKey } from '@/shared/lib';
 import { db, PROFILE_ID } from './database';
 import { renameGrams } from './legacy';
@@ -12,6 +12,8 @@ export interface Backup {
   entries: Entry[];
   customFoods: CustomFood[];
   weightLog: WeightRecord[];
+  waterLog: WaterRecord[];
+  walks: WalkRecord[];
 }
 
 export type BackupMode = 'replace' | 'merge';
@@ -91,6 +93,24 @@ function isWeightRecord(value: unknown): value is WeightRecord {
     && typeof record.createdAt === 'number';
 }
 
+function isWaterRecord(value: unknown): value is WaterRecord {
+  const record = value as WaterRecord | null;
+  return typeof record?.date === 'string'
+    && typeof record.glasses === 'number'
+    && typeof record.glassMl === 'number'
+    && typeof record.updatedAt === 'number';
+}
+
+function isWalkRecord(value: unknown): value is WalkRecord {
+  const record = value as WalkRecord | null;
+  return typeof record?.id === 'string'
+    && typeof record.date === 'string'
+    && typeof record.startedAt === 'number'
+    && (record.endedAt === undefined || typeof record.endedAt === 'number')
+    && typeof record.steps === 'number'
+    && typeof record.burnedKcal === 'number';
+}
+
 function isProfile(value: unknown): value is Profile {
   const profile = value as Profile | null;
 
@@ -111,6 +131,8 @@ export function describeBackup(backup: Backup): string {
     `своих блюд: ${backup.customFoods.length}`,
     `профиль: ${backup.profile ? 'есть' : 'нет'}`,
     `замеров веса: ${backup.weightLog.length}`,
+    `дней с водой: ${backup.waterLog.length}`,
+    `прогулок: ${backup.walks.length}`,
   ].join(', ');
 }
 
@@ -145,6 +167,14 @@ export function readBackup(raw: string): BackupCheck {
   if (!Array.isArray(candidate.weightLog) || !candidate.weightLog.every(isWeightRecord)) {
     return { ok: false, reason: 'История веса в файле повреждена' };
   }
+  const waterLog = candidate.waterLog ?? [];
+  const walks = candidate.walks ?? [];
+  if (!Array.isArray(waterLog) || !waterLog.every(isWaterRecord)) {
+    return { ok: false, reason: 'История воды в файле повреждена' };
+  }
+  if (!Array.isArray(walks) || !walks.every(isWalkRecord)) {
+    return { ok: false, reason: 'История прогулок в файле повреждена' };
+  }
   if (candidate.profile != null && !isProfile(candidate.profile)) {
     return { ok: false, reason: 'Профиль в файле повреждён' };
   }
@@ -158,16 +188,20 @@ export function readBackup(raw: string): BackupCheck {
       entries,
       customFoods,
       weightLog: candidate.weightLog,
+      waterLog,
+      walks,
     },
   };
 }
 
 export async function collectBackup(): Promise<Backup> {
-  const [profile, entries, customFoods, weightLog] = await Promise.all([
+  const [profile, entries, customFoods, weightLog, waterLog, walks] = await Promise.all([
     db.profile.get(PROFILE_ID),
     db.entries.toArray(),
     db.customFoods.toArray(),
     db.weightLog.toArray(),
+    db.waterLog.toArray(),
+    db.walks.toArray(),
   ]);
 
   return {
@@ -177,22 +211,28 @@ export async function collectBackup(): Promise<Backup> {
     entries,
     customFoods,
     weightLog,
+    waterLog,
+    walks,
   };
 }
 
 export async function applyBackup(backup: Backup, mode: BackupMode): Promise<void> {
-  await db.transaction('rw', db.entries, db.customFoods, db.profile, db.weightLog, async () => {
+  await db.transaction('rw', [db.entries, db.customFoods, db.profile, db.weightLog, db.waterLog, db.walks], async () => {
     if (mode === 'replace') {
       await Promise.all([
         db.entries.clear(),
         db.customFoods.clear(),
         db.profile.clear(),
         db.weightLog.clear(),
+        db.waterLog.clear(),
+        db.walks.clear(),
       ]);
     }
 
     await db.entries.bulkPut(backup.entries);
     await db.customFoods.bulkPut(backup.customFoods);
+    await db.waterLog.bulkPut(backup.waterLog);
+    await db.walks.bulkPut(backup.walks);
 
     const keepsCurrentProfile = mode === 'merge' && await db.profile.get(PROFILE_ID) !== undefined;
 
@@ -209,12 +249,14 @@ export async function applyBackup(backup: Backup, mode: BackupMode): Promise<voi
 }
 
 export async function wipeAllData(): Promise<void> {
-  await db.transaction('rw', db.entries, db.customFoods, db.profile, db.weightLog, async () => {
+  await db.transaction('rw', [db.entries, db.customFoods, db.profile, db.weightLog, db.waterLog, db.walks], async () => {
     await Promise.all([
       db.entries.clear(),
       db.customFoods.clear(),
       db.profile.clear(),
       db.weightLog.clear(),
+      db.waterLog.clear(),
+      db.walks.clear(),
     ]);
   });
 }

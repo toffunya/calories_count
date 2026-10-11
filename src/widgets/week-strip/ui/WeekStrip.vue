@@ -85,13 +85,13 @@ watch(selected, () => {
 
 function dayStyle(day: DateKey) {
   if (day === selected.value) {
-    return 'bg-[rgba(35,136,255,0.16)] font-semibold text-[#67adff]';
+    return 'bg-[rgba(35,136,255,0.16)] font-semibold text-[var(--ios-blue)]';
   }
   if (isToday(day)) {
-    return 'text-[#d7d9dd]';
+    return 'text-[var(--ios-label)]';
   }
 
-  return 'text-[#747983]';
+  return 'text-[var(--ios-secondary)]';
 }
 
 function fullDate(day: DateKey) {
@@ -108,7 +108,7 @@ function weekday(day: DateKey) {
     ref="strip"
     role="group"
     aria-label="Choose a day"
-    class="scrollbar-none flex touch-pan-x snap-x snap-mandatory overflow-x-auto overscroll-contain"
+    class="scrollbar-none flex snap-x snap-mandatory overflow-x-auto overscroll-contain"
   >
     <div v-for="week in weeks" :key="week[0]" class="grid w-full shrink-0 snap-center grid-cols-7 gap-1 px-4">
       <button
@@ -119,13 +119,13 @@ function weekday(day: DateKey) {
         :aria-label="fullDate(day)"
         :aria-current="day === selected ? 'date' : undefined"
         :class="cn(
-          'flex h-[52px] w-11 min-w-0 justify-self-center flex-col items-center justify-center gap-1 rounded-[13px] px-1 py-1.5 transition-all active:scale-95 disabled:opacity-30',
+          'flex h-[64px] w-full min-w-0 justify-self-center flex-col items-center justify-center gap-2 rounded-[8px] p-[8px] transition-all active:scale-95 disabled:opacity-30',
           dayStyle(day),
         )"
         @click="selected = day"
       >
         <span
-          class="max-w-full truncate text-[10px] leading-none whitespace-nowrap capitalize"
+          class="text-[12px] leading-none whitespace-nowrap capitalize"
         >
           {{ isToday(day) ? 'Today' : weekday(day) }}
         </span>

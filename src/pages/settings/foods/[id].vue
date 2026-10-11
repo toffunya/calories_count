@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { CustomFood } from '@/shared/db';
-import { ChevronLeftIcon } from '@lucide/vue';
 import { Button, toast, useConfirm } from 'shonk-ui';
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   CustomFoodFields,
   draftFromCustomFood,
@@ -13,6 +12,7 @@ import {
   removeCustomFood,
   saveCustomFood,
 } from '@/entities/food';
+import PageHeader from '@/widgets/page-header/PageHeader.vue';
 
 const route = useRoute('/settings/foods/[id]');
 const router = useRouter();
@@ -85,19 +85,7 @@ function askToRemove() {
 
 <template>
   <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-8">
-    <header class="flex items-center gap-1">
-      <RouterLink
-        to="/settings/foods"
-        class="-ml-2 flex size-10 items-center justify-center rounded-full text-muted-foreground"
-        aria-label="Назад к своим блюдам"
-      >
-        <ChevronLeftIcon class="size-5" />
-      </RouterLink>
-
-      <h1 class="text-xl font-semibold text-foreground">
-        Своё блюдо
-      </h1>
-    </header>
+    <PageHeader title="Своё блюдо" back-to="/settings/foods" />
 
     <p class="mt-1 text-sm text-muted-foreground">
       Правка меняет только будущие записи — прошлые хранят своё название и свою калорийность.
