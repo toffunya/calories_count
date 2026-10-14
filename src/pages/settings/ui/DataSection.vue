@@ -90,7 +90,7 @@ function askToWipe() {
   <div class="flex flex-col gap-3">
     <div class="grid grid-cols-2 gap-2">
       <Button type="button" variant="outline" class="h-auto flex-col gap-2 py-3" @click="saveToFile">
-        <DownloadIcon class="size-5 text-[var(--ios-blue)]" />
+        <DownloadIcon class="size-5 text-[var(--ios-accent)]" />
         {{ copy.export }}
       </Button>
 

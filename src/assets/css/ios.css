@@ -16,8 +16,12 @@
   --ios-green: #30d158;
   --ios-green-tint: #12311c;
   --ios-orange: #ff9f0a;
+  --ios-accent: #ff9f0a;
+  --ios-accent-tint: #36280f;
   --ios-orange-tint: #36280f;
   --ios-red: #ff453a;
+  --ios-pink: #ff375f;
+  --ios-pink-tint: #35151e;
   --background: var(--ios-background);
   --foreground: var(--ios-label);
   --card: var(--ios-surface);
@@ -30,8 +34,8 @@
   --muted-foreground: var(--ios-secondary);
   --accent: var(--ios-elevated);
   --accent-foreground: var(--ios-label);
-  --primary: var(--ios-blue);
-  --primary-foreground: #fff;
+  --primary: var(--ios-accent);
+  --primary-foreground: #211400;
   --success: var(--ios-green);
   --success-foreground: #000;
   --warning: var(--ios-orange);
@@ -40,7 +44,7 @@
   --destructive-foreground: #fff;
   --border: #38383a;
   --input: #48484a;
-  --ring: var(--ios-blue);
+  --ring: var(--ios-accent);
   --radius: 12px;
   background: var(--ios-background);
   color: var(--ios-label);
@@ -52,14 +56,14 @@
 .ios-app input:not([type='checkbox']):not([type='radio']), .ios-app select, .ios-app textarea { min-height: 44px; border-radius: 10px; font-size: 16px; }
 .ios-app button, .ios-app a[role='button'] { min-height: 44px; cursor: pointer; }
 .ios-app button:disabled { cursor: default; opacity: .4; }
-.ios-app :where(button, a, input, select, textarea, summary):focus-visible { outline: 2px solid var(--ios-blue); outline-offset: 3px; }
+.ios-app :where(button, a, input, select, textarea, summary):focus-visible { outline: 2px solid var(--ios-accent); outline-offset: 3px; }
 .ios-app button:active:not(:disabled), .ios-app a:active { opacity: .7; }
 .ios-app [role='tablist'] { height: 44px; padding: 3px; border-radius: 10px; background: var(--ios-elevated); }
 .ios-app [role='tablist'] button { min-height: 38px; border-radius: 8px; font-size: 14px; }
 .ios-app [role='tab'][aria-selected='true'] { background: var(--ios-fill); color: var(--ios-label); box-shadow: 0 1px 4px #0005; }
 .ios-card { border-radius: 16px; border: 1px solid #ffffff0d; background: var(--ios-surface); }
 .ios-caption { color: var(--ios-secondary); font-size: 13px; }
-.ios-primary { border-radius: 12px; background: var(--ios-blue); color: var(--primary-foreground); padding: 12px 16px; font-size: 15px; font-weight: 600; }
+.ios-primary { border-radius: 12px; background: var(--ios-accent); color: var(--primary-foreground); padding: 12px 16px; font-size: 15px; font-weight: 600; }
 .ios-app .ios-tab-bar { background: rgb(28 28 30 / 88%); backdrop-filter: blur(24px); border-radius: 20px; box-shadow: 0 4px 16px #0003; }
 .ios-app .add-fab-trigger { box-shadow: 0 3px 12px #0004; }
 .ios-app .calorie-progress { height: 6px; }
@@ -69,3 +73,21 @@
 
 .ios-app main header .home-month { font-size: 18px; }
 
+
+/* A shared field palette for onboarding inputs and sheet triggers. */
+.onboarding :is(.input-shell,.birthday-trigger,.weight-trigger,.option-trigger) {
+  background:var(--ios-surface); border:1px solid #ffffff14; border-radius:18px;
+  transition:background .18s,border-color .18s,box-shadow .18s;
+}
+.onboarding :is(.input-shell,.birthday-trigger,.weight-trigger,.option-trigger) > svg { color:var(--ios-accent) !important; }
+.onboarding :is(.field-label,.birthday-field > span,.weight-field > span,.option-field > span) { color:var(--ios-secondary) !important; }
+.onboarding :is(.input-shell,.birthday-trigger,.weight-trigger,.option-trigger):is(:focus-within,[data-state="open"]) {
+  background:#262015; border-color:var(--ios-accent) !important; box-shadow:0 0 0 3px #ff9f0a1a;
+}
+.onboarding :is(label,.birthday-field,.weight-field,.option-field):focus-within > :is(.field-label,span:first-child) { color:var(--ios-accent) !important; }
+.onboarding .input-shell:has(input:user-invalid) { border-color:var(--ios-red) !important; background:#29191a; }
+.onboarding .input-shell:has(input:user-invalid) > svg { color:var(--ios-red) !important; }
+.onboarding label:has(input:user-invalid) .field-label { color:var(--ios-red) !important; }
+.onboarding :is(.birthday-trigger,.weight-trigger,.option-trigger):disabled,.onboarding .input-shell:has(input:disabled) { opacity:.45; }
+@media (hover:hover) { .onboarding :is(.input-shell,.birthday-trigger,.weight-trigger,.option-trigger):hover:not(:focus-within):not([data-state="open"]):not(:disabled):not(:has(input:disabled)) { border-color:#ff9f0a55; } }
+@media (prefers-reduced-motion:reduce) { .onboarding :is(.input-shell,.birthday-trigger,.weight-trigger,.option-trigger) { transition:none; } }

@@ -24,7 +24,7 @@ const emit = defineEmits<{ reset: [] }>();
     <h2 class="mt-3 text-lg font-semibold">Ничего не найдено</h2>
     <p class="mt-2 text-sm text-[var(--ios-secondary)]">{{ query ? `По запросу «${query}»` : 'В этой категории пока пусто' }}</p>
     <p class="mt-1 text-sm text-[var(--ios-secondary)]">Попробуй другое название</p>
-    <button type="button" class="mt-5 min-h-11 rounded-full bg-[var(--ios-surface)] px-6 text-sm font-medium text-[var(--ios-blue)]" @click="emit('reset')">Сбросить поиск</button>
+    <button type="button" class="mt-5 min-h-11 rounded-full bg-[var(--ios-surface)] px-6 text-sm font-medium text-[var(--ios-accent)]" @click="emit('reset')">Сбросить поиск</button>
   </div>
 </template>
 

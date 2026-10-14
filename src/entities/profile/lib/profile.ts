@@ -3,7 +3,7 @@ import { db, PROFILE_ID } from '@/shared/db';
 import { toDateKey } from '@/shared/lib';
 import { calcTarget } from './calories';
 
-export type ProfileInput = Pick<Profile, 'sex' | 'age' | 'heightCm' | 'weightKg' | 'activity' | 'goal'>;
+export type ProfileInput = Pick<Profile, 'sex' | 'age' | 'heightCm' | 'weightKg' | 'activity' | 'goal'> & Pick<Partial<Profile>, 'name' | 'birthDate' | 'targetWeightKg'>;
 
 export function nextProfile(current: Profile | undefined, input: ProfileInput, now: number): Profile {
   const keepsManualTarget = current?.targetOverridden === true;
@@ -11,7 +11,9 @@ export function nextProfile(current: Profile | undefined, input: ProfileInput, n
   return {
     id: PROFILE_ID,
     ...input,
-    targetWeightKg: current?.targetWeightKg,
+    name: input.name ?? current?.name,
+    birthDate: input.birthDate ?? current?.birthDate,
+    targetWeightKg: input.targetWeightKg ?? current?.targetWeightKg,
     targetKcal: keepsManualTarget ? current.targetKcal : calcTarget(input).target,
     targetOverridden: keepsManualTarget,
     createdAt: current?.createdAt ?? now,

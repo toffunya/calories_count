@@ -30,14 +30,14 @@ function change(qty: number) {
 
 <style scoped>
 .product-card { padding: 8px; border-radius: 24px; background: var(--ios-surface); color: var(--ios-label, #fff); border: 1px solid rgba(255,255,255,.08); transition: border-color 160ms ease; }
-.product-card.selected { border-color: var(--ios-blue); }
+.product-card.selected { border-color: var(--ios-accent); }
 .product-photo { height: 142px; padding: 12px; }
 .product-photo img { filter: drop-shadow(0 8px 8px rgba(0,0,0,.22)); }
 .product-footer { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 4px; }
 .product-kcal { font-size: 15px; font-weight: 700; white-space: nowrap; }
 .product-kcal span { font-size: 11px; font-weight: 400; color: var(--ios-secondary); }
 .product-controls { display: flex; min-height: 44px; align-items: center; justify-content: center; border-radius: 999px; background: var(--ios-elevated, #2c2c2e); }
-.product-controls button { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: var(--ios-blue); }
+.product-controls button { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: var(--ios-accent); }
 .product-controls button:active { background: rgba(10,132,255,.15); }
 .product-controls span { min-width: 28px; text-align: center; font-size: 14px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .product-card { transition: none; } }

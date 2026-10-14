@@ -180,9 +180,9 @@ onBeforeUnmount(clearHoldTimer);
 .add-fab-action[data-add-action='add'] { bottom: 152px; left: calc(50% - 104px); }
 .add-fab-action[data-add-action='food-scan'] { bottom: 200px; left: calc(50% - 29px); }
 .add-fab-action[data-add-action='barcode'] { bottom: 152px; left: calc(50% + 46px); }
-.add-fab-action.is-active, .add-fab-action:focus-visible { background: var(--ios-blue); color: white; outline: 4px solid rgb(35 136 255 / 22%); scale: 1.12; }
+.add-fab-action.is-active, .add-fab-action:focus-visible { background: var(--ios-accent); color: white; outline: 4px solid rgb(35 136 255 / 22%); scale: 1.12; }
 .add-fab-label { position: absolute; bottom: calc(100% + 8px); left: 50%; translate: -50% 0; padding: 7px 10px; border: 1px solid rgb(255 255 255 / 10%); border-radius: 10px; background: var(--ios-elevated); color: var(--ios-label); box-shadow: 0 8px 20px rgb(0 0 0 / 28%); font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap; }
-.add-fab-trigger { position: absolute; bottom: max(23px, env(safe-area-inset-bottom)); left: 50%; z-index: 3; display: flex; width: 56px; height: 56px; translate: -50% 0; touch-action: none; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: var(--ios-blue); color: white; box-shadow: 0 0 24px rgb(35 136 255 / 34%); pointer-events: auto; transition: scale 180ms ease, rotate 160ms ease, box-shadow 240ms ease; }
+.add-fab-trigger { position: absolute; bottom: max(23px, env(safe-area-inset-bottom)); left: 50%; z-index: 3; display: flex; width: 56px; height: 56px; translate: -50% 0; touch-action: none; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: var(--ios-accent); color: white; box-shadow: 0 0 24px rgb(35 136 255 / 34%); pointer-events: auto; transition: scale 180ms ease, rotate 160ms ease, box-shadow 240ms ease; }
 .add-fab-trigger:active { scale: .95; }
 .add-fab-layer:has(.add-fab-menu) .add-fab-trigger { rotate: 45deg; }
 

@@ -60,6 +60,8 @@ export interface CustomFood {
 
 export interface Profile {
   id: 'me';
+  name?: string;
+  birthDate?: string;
   sex: Sex;
   age: number;
   heightCm: number;

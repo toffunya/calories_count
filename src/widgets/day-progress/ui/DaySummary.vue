@@ -43,12 +43,12 @@ function syncSlide() {
       <div class="w-full shrink-0 snap-start p-[18px]">
         <div class="flex items-center justify-between gap-2">
           <h2 class="text-sm font-semibold">Баланс питания</h2>
-          <RouterLink :to="{ path: '/nutrition', query: { date } }" class="text-[12px] font-semibold text-[var(--ios-blue)]">Подробнее →</RouterLink>
+          <RouterLink :to="{ path: '/nutrition', query: { date } }" class="text-[12px] font-semibold text-[var(--ios-accent)]">Подробнее →</RouterLink>
         </div>
         <dl class="mt-3 grid grid-cols-2 gap-x-5 gap-y-2">
           <div v-for="(row, index) in rows" :key="row.id" class="flex items-baseline justify-between gap-2" :class="index < 3 ? 'col-span-2' : ''">
             <dt class="text-[12px] text-[var(--ios-secondary)]">{{ row.name }}</dt>
-            <dd class="shrink-0 text-[13px] font-semibold tabular-nums" :class="index === 0 ? 'text-[var(--ios-blue)]' : index === 1 ? 'text-[var(--ios-orange)]' : index === 2 ? 'text-[var(--ios-green)]' : ''">
+            <dd class="shrink-0 text-[13px] font-semibold tabular-nums" :class="index === 0 ? 'text-[var(--ios-accent)]' : index === 1 ? 'text-[var(--ios-orange)]' : index === 2 ? 'text-[var(--ios-green)]' : ''">
               {{ row.value === undefined ? '—' : formatNutrient(row.value) }}<span v-if="row.partial && row.value !== undefined">*</span>
             </dd>
           </div>
@@ -63,10 +63,10 @@ function syncSlide() {
         type="button"
         :aria-pressed="activeSlide === index"
         class="flex items-center gap-2 px-4 text-[12px] font-semibold"
-        :class="activeSlide === index ? 'text-[var(--ios-blue)]' : 'text-[var(--ios-secondary)]'"
+        :class="activeSlide === index ? 'text-[var(--ios-accent)]' : 'text-[var(--ios-secondary)]'"
         @click="selectSlide(index)"
       >
-        <span aria-hidden="true" class="size-1.5 rounded-full" :class="activeSlide === index ? 'bg-[var(--ios-blue)]' : 'bg-[var(--ios-fill)]'" />{{ label }}
+        <span aria-hidden="true" class="size-1.5 rounded-full" :class="activeSlide === index ? 'bg-[var(--ios-accent)]' : 'bg-[var(--ios-fill)]'" />{{ label }}
       </button>
     </div>
   </section>

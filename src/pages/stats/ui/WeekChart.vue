@@ -44,7 +44,7 @@ function heightPercent(kcal: number): string {
       >
         <span
           v-if="day.kcal > 0"
-          class="absolute inset-x-0 bottom-0 rounded-[9px] bg-[var(--ios-blue)] transition-[height] duration-500 group-active:bg-[var(--ios-blue)]"
+          class="absolute inset-x-0 bottom-0 rounded-[9px] bg-[var(--ios-accent)] transition-[height] duration-500 group-active:bg-[var(--ios-accent)]"
           :class="day.kcal > props.target && props.target > 0 ? 'bg-[var(--ios-orange)]' : ''"
           :style="{ height: heightPercent(day.kcal) }"
         />
@@ -63,7 +63,7 @@ function heightPercent(kcal: number): string {
         :key="day.date"
         :class="cn(
           'flex flex-col items-center text-center text-[12px] leading-4',
-          isToday(day.date) ? 'font-semibold text-[var(--ios-blue)]' : 'text-[var(--ios-secondary)]',
+          isToday(day.date) ? 'font-semibold text-[var(--ios-accent)]' : 'text-[var(--ios-secondary)]',
         )"
       >
         <span class="uppercase">{{ formatWeekday(day.date).replace('.', '') }}</span>

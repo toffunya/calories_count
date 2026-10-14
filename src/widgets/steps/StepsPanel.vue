@@ -48,7 +48,7 @@ async function addManual() {
   <section class="mt-4 rounded-[16px] border border-white/8 bg-[var(--ios-surface)] p-4">
     <div class="flex items-center gap-3"><FootprintsIcon class="size-6 text-[var(--ios-secondary)]" /><div><h2 class="text-sm font-bold">Шаги сегодня</h2><p class="mt-1 text-xs text-[var(--ios-secondary)]">{{ formatNumber(steps) }} шагов · ≈ {{ formatNumber(kcal) }} ккал</p></div></div>
     <p v-if="stepStatus !== 'Телефон считает шаги, пока приложение открыто.'" role="status" class="mt-3 text-xs leading-5 text-[var(--ios-secondary)]">{{ stepStatus }}</p>
-    <button type="button" class="mt-3 w-full rounded-[8px] bg-[var(--ios-blue)] px-4 py-3 text-sm font-semibold hover:bg-[var(--ios-blue)] disabled:opacity-40" :disabled="saving || changing" @click="toggleTracking"><component :is="tracking ? SquareIcon : PlayIcon" class="mr-2 inline size-4" aria-hidden="true" />{{ tracking ? 'Завершить' : 'Начать' }}</button>
+    <button type="button" class="mt-3 w-full rounded-[8px] bg-[var(--ios-accent)] px-4 py-3 text-sm font-semibold hover:bg-[var(--ios-accent)] disabled:opacity-40" :disabled="saving || changing" @click="toggleTracking"><component :is="tracking ? SquareIcon : PlayIcon" class="mr-2 inline size-4" aria-hidden="true" />{{ tracking ? 'Завершить' : 'Начать' }}</button>
     <details class="mt-2"><summary class="flex w-fit cursor-pointer items-center gap-1.5 py-1 text-[12px] text-[var(--ios-secondary)]"><InfoIcon class="size-3.5" />Как работает</summary><p class="mt-1 text-[12px] leading-4 text-[var(--ios-secondary)]">Телефон в кармане, приложение открыто. Шаги определяются по движению; калории — приблизительная оценка.</p></details>
     <details class="mt-2 border-t border-white/8 pt-3">
       <summary class="flex cursor-pointer items-center gap-1.5 text-xs text-[var(--ios-secondary)]"><PlusIcon class="size-3.5" />Вручную</summary><form class="mt-3 flex gap-2" @submit.prevent="addManual">
@@ -62,7 +62,7 @@ async function addManual() {
           placeholder="Количество"
           class="min-w-0 flex-1 rounded-lg border border-white/10 bg-[var(--ios-background)] p-2 text-sm"
           :disabled="tracking || saving || changing"
-        ><button class="rounded-lg bg-[var(--ios-blue-tint)] px-3 text-xs" :disabled="tracking || saving || changing">Добавить</button>
+        ><button class="rounded-lg bg-[var(--ios-accent-tint)] px-3 text-xs" :disabled="tracking || saving || changing">Добавить</button>
       </form>
     </details>
   </section>

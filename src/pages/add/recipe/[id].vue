@@ -50,17 +50,17 @@ async function addRecipe() {
       <div class="rounded-[28px] border border-white/8 bg-[var(--ios-surface)] p-5 shadow-2xl">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-[12px] font-semibold tracking-[0.14em] text-[var(--ios-blue)] uppercase">Рецепт дня</p>
+            <p class="text-[12px] font-semibold tracking-[0.14em] text-[var(--ios-accent)] uppercase">Рецепт дня</p>
             <h2 class="mt-1 text-2xl leading-7 font-bold tracking-tight">{{ food.name }}</h2>
           </div>
-          <div class="flex shrink-0 items-center gap-1 rounded-full bg-[var(--ios-blue)]/12 px-2.5 py-1.5 text-xs font-semibold text-[var(--ios-blue)]">
+          <div class="flex shrink-0 items-center gap-1 rounded-full bg-[var(--ios-accent)]/12 px-2.5 py-1.5 text-xs font-semibold text-[var(--ios-accent)]">
             <FlameIcon class="size-3.5" />{{ food.kcal }}
           </div>
         </div>
         <p class="mt-3 text-sm leading-5 text-zinc-400">{{ food.recipe.summary }}</p>
 
         <div class="mt-4 grid grid-cols-3 gap-2">
-          <div class="rounded-2xl bg-black/20 p-3"><Clock3Icon class="size-4 text-[var(--ios-blue)]" /><p class="mt-2 text-sm font-semibold">{{ food.recipe.timeMinutes }} мин</p><p class="text-[12px] text-zinc-500">всего</p></div>
+          <div class="rounded-2xl bg-black/20 p-3"><Clock3Icon class="size-4 text-[var(--ios-accent)]" /><p class="mt-2 text-sm font-semibold">{{ food.recipe.timeMinutes }} мин</p><p class="text-[12px] text-zinc-500">всего</p></div>
           <div class="rounded-2xl bg-black/20 p-3"><UsersIcon class="size-4 text-[var(--ios-green)]" /><p class="mt-2 text-sm font-semibold">{{ food.recipe.servings }}</p><p class="text-[12px] text-zinc-500">порции</p></div>
           <div class="rounded-2xl bg-black/20 p-3"><ChefHatIcon class="size-4 text-[var(--ios-orange)]" /><p class="mt-2 text-sm font-semibold">{{ food.recipe.difficulty }}</p><p class="text-[12px] text-zinc-500">уровень</p></div>
         </div>
@@ -70,7 +70,7 @@ async function addRecipe() {
         <h2 class="font-semibold">Пищевая ценность</h2><p class="mt-0.5 text-xs text-zinc-500">на одну порцию</p>
         <div class="mt-4 grid grid-cols-4 gap-2 text-center">
           <div><p class="text-lg font-bold">{{ food.kcal }}</p><p class="text-[12px] text-zinc-500">ккал</p></div>
-          <div><p class="text-lg font-bold text-[var(--ios-blue)]">{{ food.nutrients?.protein }}</p><p class="text-[12px] text-zinc-500">белки</p></div>
+          <div><p class="text-lg font-bold text-[var(--ios-accent)]">{{ food.nutrients?.protein }}</p><p class="text-[12px] text-zinc-500">белки</p></div>
           <div><p class="text-lg font-bold text-[var(--ios-orange)]">{{ food.nutrients?.fat }}</p><p class="text-[12px] text-zinc-500">жиры</p></div>
           <div><p class="text-lg font-bold text-[var(--ios-green)]">{{ food.nutrients?.carbs }}</p><p class="text-[12px] text-zinc-500">углев.</p></div>
         </div>
@@ -80,7 +80,7 @@ async function addRecipe() {
         <h2 class="text-lg font-bold">Ингредиенты</h2>
         <ul class="mt-3 grid gap-2">
           <li v-for="ingredient in food.recipe.ingredients" :key="ingredient" class="flex items-center gap-3 rounded-2xl bg-[var(--ios-surface)] px-3.5 py-3 text-sm text-zinc-300">
-            <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--ios-blue)]/12 text-[var(--ios-blue)]"><CheckIcon class="size-3.5" /></span>{{ ingredient }}
+            <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--ios-accent)]/12 text-[var(--ios-accent)]"><CheckIcon class="size-3.5" /></span>{{ ingredient }}
           </li>
         </ul>
       </section>
@@ -89,7 +89,7 @@ async function addRecipe() {
         <h2 class="text-lg font-bold">Как готовить</h2>
         <ol class="mt-3 grid gap-3">
           <li v-for="(step, index) in food.recipe.steps" :key="step" class="flex gap-3 rounded-2xl border border-white/8 bg-[var(--ios-surface)] p-3.5">
-            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--ios-blue)] text-xs font-bold">{{ index + 1 }}</span><p class="text-sm leading-5 text-zinc-300">{{ step }}</p>
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--ios-accent)] text-xs font-bold">{{ index + 1 }}</span><p class="text-sm leading-5 text-zinc-300">{{ step }}</p>
           </li>
         </ol>
       </section>

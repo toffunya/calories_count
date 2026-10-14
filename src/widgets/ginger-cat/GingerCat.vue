@@ -23,9 +23,9 @@ defineProps<{ thinking?: boolean }>();
     <path d="M48 109 Q43 80 80 80 Q115 80 116 118 Q116 138 80 137 Q44 139 48 109" fill="#ef963e" />
     <ellipse cx="80" cy="115" rx="20" ry="21" fill="#ffe5bd" />
     <g class="head">
-      <path d="M39 51 L34 16 Q34 9 42 15 L64 34 M98 34 L121 15 Q129 9 127 20 L123 53" fill="#f5a24d" stroke="#f5a24d" stroke-width="8" stroke-linejoin="round" />
-      <path d="M41 23 L44 44 L57 36 M119 23 L115 44 L104 36" fill="#f6b5a0" />
-      <path d="M34 62 Q31 32 80 31 Q128 32 127 65 Q128 100 80 102 Q32 100 34 62" fill="#ffb75e" />
+      <path d="M38 54 Q27 27 43 27 L64 37 L46 48 Z M98 37 L117 27 Q134 27 123 54 L112 48 Z" fill="#f5a24d" stroke="#f5a24d" stroke-width="8" stroke-linejoin="round" />
+      <path d="M37 35 Q39 30 48 35 L55 39 L42 43 Z M123 35 Q121 30 112 35 L105 39 L118 43 Z" fill="#f6b5a0" />
+      <path d="M34 62 L28 56 L32 72 L25 76 L34 84 L30 91 L43 94 Q49 104 80 104 Q112 104 119 94 L130 91 L126 83 L135 76 L128 72 L132 57 L126 62 Q128 32 80 31 Q31 32 34 62" fill="#ffb75e" />
       <path d="M67 33 L71 46 M80 32 L80 47 M93 33 L89 46" stroke="#d67728" stroke-width="5" stroke-linecap="round" />
       <path d="M35 64 L48 68 M35 76 L47 77 M124 64 L112 68 M124 76 L112 77" stroke="#e58932" stroke-width="4" stroke-linecap="round" />
       <g class="eyes" fill="#493022">

@@ -21,7 +21,7 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
   <section class="bg-[var(--ios-surface)] p-[18px]" :class="embedded ? '' : 'rounded-3xl border border-white/[0.08]'">
     <div class="flex items-center justify-between gap-4 text-xs text-[var(--ios-secondary)]">
       <span class="inline-flex items-center gap-2">
-        <span class="flex size-7 items-center justify-center rounded-lg bg-[var(--ios-blue)]/[0.12] text-[var(--ios-blue)]">
+        <span class="flex size-7 items-center justify-center rounded-lg bg-[var(--ios-accent)]/[0.12] text-[var(--ios-accent)]">
           <FlameIcon class="size-4" stroke-width="2" aria-hidden="true" />
         </span>
         {{ headline }}
@@ -89,13 +89,13 @@ const headline = computed(() => isOver.value ? 'Over target' : 'Daily calories')
 
 .calorie-progress::-webkit-progress-value {
   border-radius: 999px;
-  background: var(--ios-blue);
+  background: var(--ios-accent);
   transition: width 300ms ease;
 }
 
 .calorie-progress::-moz-progress-bar {
   border-radius: 999px;
-  background: var(--ios-blue);
+  background: var(--ios-accent);
 }
 
 .calorie-progress.is-over::-webkit-progress-value,

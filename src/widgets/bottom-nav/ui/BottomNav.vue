@@ -42,7 +42,7 @@ const items = computed<NavItem[]>(() => isEnglish.value
               :aria-label="item.label"
               :class="cn(
                 'flex h-12 w-full items-center justify-center text-[12px] transition-all active:scale-95',
-                isActive ? 'font-bold text-[var(--ios-blue)]' : 'text-[var(--ios-secondary)]',
+                isActive ? 'font-bold text-[var(--ios-accent)]' : 'text-[var(--ios-secondary)]',
               )"
               @click="navigate"
             >

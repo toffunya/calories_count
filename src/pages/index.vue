@@ -91,7 +91,7 @@ function toggleGlass(index: number) {
         {{ monthLabel }}
       </h1>
 
-      <RouterLink :to="{ path: '/chat', query: { date: dateKey } }" aria-label="Открыть чат помощника" class="grid size-10 place-items-center rounded-xl bg-[var(--ios-blue-tint)] text-[var(--ios-blue)] hover:bg-[var(--ios-blue-tint)] focus-visible:ring-2">
+      <RouterLink :to="{ path: '/chat', query: { date: dateKey } }" aria-label="Открыть чат помощника" class="grid size-10 place-items-center rounded-xl bg-[var(--ios-accent-tint)] text-[var(--ios-accent)] hover:bg-[var(--ios-accent-tint)] focus-visible:ring-2">
         <SparklesIcon class="size-5" />
       </RouterLink>
     </header>
@@ -105,9 +105,9 @@ function toggleGlass(index: number) {
         <div>
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <GlassWaterIcon class="size-4 text-[var(--ios-blue)]" />
+              <GlassWaterIcon class="size-4 text-[var(--ios-accent)]" />
               <span class="text-xs font-semibold">Вода</span>
-              <span class="text-[12px] font-semibold text-[var(--ios-blue)]">{{ waterGlasses * 250 }} мл</span>
+              <span class="text-[12px] font-semibold text-[var(--ios-accent)]">{{ waterGlasses * 250 }} мл</span>
             </div>
             <span class="text-[12px] text-[var(--ios-secondary)]">{{ waterGlasses }} / {{ WATER_GOAL_GLASSES }} стаканов</span>
           </div>
@@ -119,7 +119,7 @@ function toggleGlass(index: number) {
               :aria-label="`${index} стакан`"
               :aria-pressed="index <= waterGlasses"
               class="grid h-9 place-items-center rounded-xl border transition-all active:scale-90"
-              :class="index <= waterGlasses ? 'border-[var(--ios-blue)]/40 bg-[var(--ios-blue-tint)] text-[var(--ios-blue)]' : 'border-white/[0.06] bg-white/[0.025] text-[var(--ios-secondary)]'"
+              :class="index <= waterGlasses ? 'border-[var(--ios-accent)]/40 bg-[var(--ios-accent-tint)] text-[var(--ios-accent)]' : 'border-white/[0.06] bg-white/[0.025] text-[var(--ios-secondary)]'"
               @click="toggleGlass(index - 1)"
             >
               <GlassWaterIcon class="size-[17px]" :fill="index <= waterGlasses ? 'currentColor' : 'none'" />

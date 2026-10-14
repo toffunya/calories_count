@@ -132,7 +132,7 @@ async function confirm() {
 
     <div class="scrollbar-none shrink-0 overflow-x-auto px-4 pb-3">
       <div class="flex w-max gap-2">
-        <button v-for="item in groups" :key="item.id" type="button" :class="cn('rounded-full border px-3.5 py-2 text-xs font-medium whitespace-nowrap transition-colors', (tab === 'products' ? productGroup : recipeGroup) === item.id ? 'border-[var(--ios-blue)] bg-[var(--ios-blue)] text-white' : 'border-white/10 bg-[var(--ios-surface)] text-zinc-400')" @click="chooseGroup(item.id)">
+        <button v-for="item in groups" :key="item.id" type="button" :class="cn('rounded-full border px-3.5 py-2 text-xs font-medium whitespace-nowrap transition-colors', (tab === 'products' ? productGroup : recipeGroup) === item.id ? 'border-[var(--ios-accent)] bg-[var(--ios-accent)] text-white' : 'border-white/10 bg-[var(--ios-surface)] text-zinc-400')" @click="chooseGroup(item.id)">
           {{ item.name }}
         </button>
       </div>
@@ -187,7 +187,7 @@ async function confirm() {
 
 <style scoped>
 .catalog-section { position: relative; border-bottom: 2px solid transparent; }
-.catalog-section.is-active { border-bottom-color: var(--ios-blue); }
-.catalog-section.is-active svg { color: var(--ios-blue); }
+.catalog-section.is-active { border-bottom-color: var(--ios-accent); }
+.catalog-section.is-active svg { color: var(--ios-accent); }
 .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 </style>

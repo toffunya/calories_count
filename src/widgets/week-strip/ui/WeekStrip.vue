@@ -85,7 +85,7 @@ watch(selected, () => {
 
 function dayStyle(day: DateKey) {
   if (day === selected.value) {
-    return 'bg-[rgba(35,136,255,0.16)] font-semibold text-[var(--ios-blue)]';
+    return 'bg-[rgba(35,136,255,0.16)] font-semibold text-[var(--ios-accent)]';
   }
   if (isToday(day)) {
     return 'text-[var(--ios-label)]';

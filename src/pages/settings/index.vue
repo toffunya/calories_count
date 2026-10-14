@@ -160,10 +160,10 @@ const menu = computed(() => [
               </p>
             </div>
             <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.06]">
-              <div class="h-full rounded-full bg-[var(--ios-blue)]" :style="{ width: `${goalProgress}%` }" />
+              <div class="h-full rounded-full bg-[var(--ios-accent)]" :style="{ width: `${goalProgress}%` }" />
             </div>
           </template>
-          <RouterLink v-else to="/settings/preferences" class="mt-1 block text-xs font-semibold text-[var(--ios-blue)]">
+          <RouterLink v-else to="/settings/preferences" class="mt-1 block text-xs font-semibold text-[var(--ios-accent)]">
             {{ isEnglish ? 'Set goal' : 'Задать цель' }}
           </RouterLink>
           <p v-if="healthyRange" class="mt-3 text-[12px] text-[var(--ios-secondary)]">

@@ -79,7 +79,7 @@ function toggle(section: 'target' | 'profile' | 'data' | 'about') {
 
     <section class="mt-4 rounded-[16px] border border-white/8 bg-[var(--ios-surface)] p-4">
       <div class="flex items-center gap-3">
-        <span class="grid size-9 place-items-center rounded-xl bg-[var(--ios-blue-tint)] text-[var(--ios-blue)]">
+        <span class="grid size-9 place-items-center rounded-xl bg-[var(--ios-accent-tint)] text-[var(--ios-accent)]">
           <LanguagesIcon class="size-[18px]" />
         </span>
         <div>
@@ -93,7 +93,7 @@ function toggle(section: 'target' | 'profile' | 'data' | 'about') {
           :key="option.id"
           type="button"
           class="h-10 rounded-[11px] text-xs font-bold transition-all"
-          :class="locale === option.id ? 'bg-[var(--ios-blue)] text-white shadow-[0_6px_18px_rgba(39,140,255,0.25)]' : 'text-[var(--ios-secondary)]'"
+          :class="locale === option.id ? 'bg-[var(--ios-accent)] text-white shadow-[0_6px_18px_rgba(39,140,255,0.25)]' : 'text-[var(--ios-secondary)]'"
           @click="chooseLanguage(option.id)"
         >
           {{ option.label }}

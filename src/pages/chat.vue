@@ -70,7 +70,7 @@ async function scrollToLatest() {
       <GingerCat :thinking="thinking" class="size-[88px]" />
       <div class="text-sm"><p class="font-semibold text-[var(--ios-orange)]">{{ thinking ? 'Рыжик думает…' : 'Рыжик на связи' }}</p><p class="mt-1 text-[12px] text-[var(--ios-secondary)]">{{ thinking ? 'Смотрю в твой дневник' : 'Разберём день по лапочкам' }}</p></div>
     </div>
-    <div ref="feed" role="log" aria-live="polite" :aria-busy="thinking" class="scrollbar-none mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto pb-3"><div v-for="(message, index) in messages" :key="index" class="max-w-[92%] whitespace-pre-wrap rounded-2xl p-3.5 text-sm leading-6" :class="message.role === 'user' ? 'ml-auto bg-[var(--ios-blue-tint)]' : 'bg-[var(--ios-surface)]'">{{ message.text }}</div><div v-if="thinking" role="status" class="flex w-fit items-center gap-2 rounded-2xl bg-[var(--ios-surface)] px-4 py-3 text-xs text-[var(--ios-secondary)]"><span>Рыжик готовит ответ</span><span class="typing-dots flex gap-1" aria-hidden="true"><i /><i /><i /></span></div></div>
+    <div ref="feed" role="log" aria-live="polite" :aria-busy="thinking" class="scrollbar-none mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto pb-3"><div v-for="(message, index) in messages" :key="index" class="max-w-[92%] whitespace-pre-wrap rounded-2xl p-3.5 text-sm leading-6" :class="message.role === 'user' ? 'ml-auto bg-[var(--ios-accent-tint)]' : 'bg-[var(--ios-surface)]'">{{ message.text }}</div><div v-if="thinking" role="status" class="flex w-fit items-center gap-2 rounded-2xl bg-[var(--ios-surface)] px-4 py-3 text-xs text-[var(--ios-secondary)]"><span>Рыжик готовит ответ</span><span class="typing-dots flex gap-1" aria-hidden="true"><i /><i /><i /></span></div></div>
     <div aria-label="Быстрые вопросы" class="scrollbar-none flex shrink-0 gap-2 overflow-x-auto py-3">
       <button
         v-for="question in ['Итоги дня', 'Мои БЖУ', 'Как считать шаги?']"
@@ -83,7 +83,7 @@ async function scrollToLatest() {
         {{ question }}
       </button>
     </div>
-    <form class="flex shrink-0 gap-2" @submit.prevent="send()"><input v-model="input" maxlength="1000" aria-label="Сообщение помощнику" placeholder="Задай вопрос…" class="min-w-0 flex-1 rounded-xl border border-white/10 bg-[var(--ios-surface)] px-3 py-3 text-sm"><button :disabled="!input.trim() || thinking" aria-label="Отправить" class="grid size-11 place-items-center rounded-xl bg-[var(--ios-blue)] disabled:opacity-40"><SendIcon class="size-5" /></button></form>
+    <form class="flex shrink-0 gap-2" @submit.prevent="send()"><input v-model="input" maxlength="1000" aria-label="Сообщение помощнику" placeholder="Задай вопрос…" class="min-w-0 flex-1 rounded-xl border border-white/10 bg-[var(--ios-surface)] px-3 py-3 text-sm"><button :disabled="!input.trim() || thinking" aria-label="Отправить" class="grid size-11 place-items-center rounded-xl bg-[var(--ios-accent)] disabled:opacity-40"><SendIcon class="size-5" /></button></form>
   </main>
 </template>
 

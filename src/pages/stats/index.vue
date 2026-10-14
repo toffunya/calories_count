@@ -173,20 +173,20 @@ function movePeriod(offset: number) {
 
     <section v-if="metric === 'weight'" class="mt-5 space-y-3" aria-label="Показатели веса">
       <article class="ios-card p-5">
-        <div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="grid size-8 place-items-center rounded-lg bg-[var(--ios-blue-tint)] text-[var(--ios-blue)]"><ScaleIcon class="size-4" aria-hidden="true" /></span><p class="ios-caption">Текущий вес</p></div><RouterLink to="/settings/preferences" aria-label="Редактировать параметры профиля" class="grid size-11 place-items-center rounded-xl text-[var(--ios-blue)]"><PencilIcon class="size-4" /></RouterLink></div>
+        <div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="grid size-8 place-items-center rounded-lg bg-[var(--ios-accent-tint)] text-[var(--ios-accent)]"><ScaleIcon class="size-4" aria-hidden="true" /></span><p class="ios-caption">Текущий вес</p></div><RouterLink to="/settings/preferences" aria-label="Редактировать параметры профиля" class="grid size-11 place-items-center rounded-xl text-[var(--ios-accent)]"><PencilIcon class="size-4" /></RouterLink></div>
         <p class="mt-2 text-[40px] leading-none font-bold tracking-tight tabular-nums">{{ profile ? formatNumber(profile.weightKg) : '—' }} <span class="text-lg font-medium text-muted-foreground">кг</span></p>
-        <div class="mt-4 flex justify-between border-t border-white/10 pt-3 text-sm"><span class="flex items-center gap-1.5 text-muted-foreground"><RulerIcon class="size-4 text-[var(--ios-blue)]" aria-hidden="true" />Рост {{ profile?.heightCm ?? '—' }} см</span><span>ИМТ {{ bmi ?? '—' }}</span></div>
+        <div class="mt-4 flex justify-between border-t border-white/10 pt-3 text-sm"><span class="flex items-center gap-1.5 text-muted-foreground"><RulerIcon class="size-4 text-[var(--ios-accent)]" aria-hidden="true" />Рост {{ profile?.heightCm ?? '—' }} см</span><span>ИМТ {{ bmi ?? '—' }}</span></div>
       </article>
       <article class="ios-card p-4">
         <div class="flex items-center justify-between gap-3"><h2 class="flex items-center gap-2 text-sm font-semibold"><span class="grid size-8 place-items-center rounded-lg bg-[var(--ios-green-tint)] text-[var(--ios-green)]"><RulerIcon class="size-4" aria-hidden="true" /></span>По росту</h2><span class="font-semibold text-[var(--ios-green)]">{{ healthyRange ? `${healthyRange.min}–${healthyRange.max} кг` : '—' }}</span></div>
         <details class="mt-2"><summary aria-label="Как рассчитан ориентир по росту" class="flex w-fit cursor-pointer items-center gap-1.5 text-[12px] text-muted-foreground"><InfoIcon class="size-3.5" />Об ориентире</summary><p class="mt-2 text-xs leading-5 text-muted-foreground">{{ healthyRange ? 'Диапазон по ИМТ 18,5–24,9 для взрослых от 20 лет. Это общий ориентир, не персональный идеальный вес.' : 'Для возраста до 20 лет взрослый диапазон ИМТ не применяется.' }}</p></details>
       </article>
       <article class="ios-card p-4">
-        <div class="flex items-center justify-between"><h2 class="flex items-center gap-2 text-sm font-semibold"><span class="grid size-8 place-items-center rounded-lg bg-[var(--ios-orange-tint)] text-[var(--ios-orange)]"><TargetIcon class="size-4" aria-hidden="true" /></span>Цель по весу</h2><span class="font-semibold text-[var(--ios-blue)]">{{ profile?.targetWeightKg ? `${formatNumber(profile.targetWeightKg)} кг` : 'Не задана' }}</span></div>
+        <div class="flex items-center justify-between"><h2 class="flex items-center gap-2 text-sm font-semibold"><span class="grid size-8 place-items-center rounded-lg bg-[var(--ios-orange-tint)] text-[var(--ios-orange)]"><TargetIcon class="size-4" aria-hidden="true" /></span>Цель по весу</h2><span class="font-semibold text-[var(--ios-accent)]">{{ profile?.targetWeightKg ? `${formatNumber(profile.targetWeightKg)} кг` : 'Не задана' }}</span></div>
         <p class="mt-2 text-xs text-muted-foreground">{{ distanceToGoal === undefined ? 'Добавь цель через +' : distanceToGoal > 0 ? `До цели: −${formatNumber(distanceToGoal)} кг` : distanceToGoal < 0 ? `До цели: +${formatNumber(Math.abs(distanceToGoal))} кг` : 'Цель достигнута' }}</p>
       </article>
       <details class="ios-card p-4">
-        <summary class="flex cursor-pointer items-center gap-2 text-sm font-semibold text-[var(--ios-blue)]"><PlusIcon class="size-4" />Вес и цель</summary>
+        <summary class="flex cursor-pointer items-center gap-2 text-sm font-semibold text-[var(--ios-accent)]"><PlusIcon class="size-4" />Вес и цель</summary>
         <form class="mt-4 space-y-3" @submit.prevent="saveWeight">
           <label class="block text-sm">Новый вес, кг<input
             v-model="weightInput"
@@ -239,14 +239,14 @@ function movePeriod(offset: number) {
           :aria-pressed="selectedDate === day.date"
           class="flex h-[48px] min-w-0 flex-col items-center justify-center rounded-[9px] border text-center transition-colors"
           :class="[
-            day.kcal > 0 ? 'border-[var(--ios-blue-tint)] bg-[var(--ios-blue-tint)]' : 'border-transparent bg-[var(--ios-surface)]',
+            day.kcal > 0 ? 'border-[var(--ios-accent-tint)] bg-[var(--ios-accent-tint)]' : 'border-transparent bg-[var(--ios-surface)]',
             selectedDate === day.date ? '!border-[#6f7d98]' : '',
             day.isFuture ? 'opacity-30' : '',
           ]"
           @click="selectedDate = day.date"
         >
           <span class="text-[14px] leading-4" :class="day.kcal > 0 ? 'text-[var(--ios-secondary)]' : 'text-[var(--ios-secondary)]'">{{ day.day }}</span>
-          <span v-if="day.kcal > 0" class="mt-0.5 max-w-full truncate px-0.5 text-[12px] leading-3 font-medium tabular-nums text-[var(--ios-blue)]">{{ formatNumber(day.kcal) }}</span>
+          <span v-if="day.kcal > 0" class="mt-0.5 max-w-full truncate px-0.5 text-[12px] leading-3 font-medium tabular-nums text-[var(--ios-accent)]">{{ formatNumber(day.kcal) }}</span>
         </button>
       </div>
     </section>
@@ -268,7 +268,7 @@ function movePeriod(offset: number) {
     </section>
 
     <section v-else class="ios-card mt-5 p-4" aria-label="Статистика веса">
-      <div class="mb-3 flex items-center justify-between gap-2"><h2 class="flex items-center gap-1.5 text-sm font-semibold"><HistoryIcon class="size-4 text-[var(--ios-blue)]" aria-hidden="true" />История веса</h2><PeriodToggle v-model="viewMode" /></div>
+      <div class="mb-3 flex items-center justify-between gap-2"><h2 class="flex items-center gap-1.5 text-sm font-semibold"><HistoryIcon class="size-4 text-[var(--ios-accent)]" aria-hidden="true" />История веса</h2><PeriodToggle v-model="viewMode" /></div>
       <p v-if="monthWeightChange !== undefined" class="mt-2 text-xs leading-5 text-muted-foreground">{{ `За ${viewMode === 'month' ? 'месяц' : 'неделю'}: ${monthWeightChange > 0 ? '+' : ''}${formatNumber(monthWeightChange)} кг` }}</p>
       <ul v-if="periodWeights.length" class="mt-3 divide-y divide-white/10"><li v-for="record in [...periodWeights].reverse()" :key="record.date" class="flex items-center justify-between py-3 text-sm"><span class="flex items-center gap-2 text-muted-foreground"><CalendarDaysIcon class="size-4" aria-hidden="true" />{{ record.date.split('-').reverse().join('.') }}</span><strong>{{ formatNumber(record.kg) }} кг</strong></li></ul>
       <p v-else class="mt-4 text-sm text-muted-foreground">Нет измерений</p>
@@ -276,8 +276,8 @@ function movePeriod(offset: number) {
 
     <section v-if="metric === 'calories'" class="mt-6 grid grid-cols-3 gap-2" aria-label="Показатели здоровья">
       <article class="rounded-2xl bg-[var(--ios-surface)] p-3">
-        <GlassWaterIcon class="mb-2 size-5 text-[var(--ios-blue)]" aria-hidden="true" /><p class="text-[12px] text-[var(--ios-secondary)]">Вода</p>
-        <p class="mt-1 text-sm font-bold tabular-nums text-[var(--ios-blue)]">{{ formatNumber(periodWaterMl) }}</p>
+        <GlassWaterIcon class="mb-2 size-5 text-[var(--ios-accent)]" aria-hidden="true" /><p class="text-[12px] text-[var(--ios-secondary)]">Вода</p>
+        <p class="mt-1 text-sm font-bold tabular-nums text-[var(--ios-accent)]">{{ formatNumber(periodWaterMl) }}</p>
         <p class="text-[12px] text-[var(--ios-secondary)]">мл</p>
       </article>
       <article class="rounded-2xl bg-[var(--ios-surface)] p-3">
